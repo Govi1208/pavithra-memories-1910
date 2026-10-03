@@ -51,25 +51,25 @@
         "id":  9,
         "image":  "image009.jpg",
         "order":  9,
-        "ratio":  "21:9"
+        "ratio":  "4:3"
     },
     {
         "id":  10,
         "image":  "image010.jpg",
         "order":  10,
-        "ratio":  "1:1"
+        "ratio":  "9:16"
     },
     {
         "id":  11,
         "image":  "image011.jpg",
         "order":  11,
-        "ratio":  "2:3"
+        "ratio":  "9:16"
     },
     {
         "id":  12,
         "image":  "image012.jpg",
         "order":  12,
-        "ratio":  "3:4"
+        "ratio":  "9:16"
     },
     {
         "id":  13,
