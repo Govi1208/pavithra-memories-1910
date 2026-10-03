@@ -1,17 +1,17 @@
 :root {
-  --pad: 8px;
+  --pad: 10px;
 }
 
 html {
   min-height: 100%;
   overflow-y: scroll; /* always reserve the scrollbar so the layout width never jumps */
-  background: linear-gradient(135deg, #ff9ecb 0%, #ffd6e8 45%, #ffffff 100%) fixed;
+  background: #fff;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: transparent;
+  background: #fff;
 }
 
 /* Items are positioned by the script so every row fills the full width: no gaps. */
@@ -23,9 +23,7 @@ body {
 .item {
   position: absolute;
   overflow: hidden;
-  border-radius: 10px;
-  background: #f7b6d2; /* shows briefly while a photo loads, never white */
-  box-shadow: 0 2px 10px rgba(214, 51, 132, 0.25);
+  background: #fff;
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
@@ -124,11 +122,7 @@ body {
 
 @media (max-width: 700px) {
   :root {
-    --pad: 6px;
-  }
-
-  .item {
-    border-radius: 8px;
+    --pad: 5px;
   }
 
   .controls button,
@@ -143,33 +137,6 @@ body {
     line-height: 26px;
     padding: 0 6px;
   }
-}
-
-.toolbar {
-  display: flex;
-  justify-content: flex-end;
-  margin: var(--pad) var(--pad) 0;
-}
-
-.toolbar {
-  gap: 8px;
-}
-
-#reset,
-#download {
-  border: none;
-  border-radius: 20px;
-  padding: 9px 18px;
-  background: #d63384;
-  color: #fff;
-  font: 600 14px sans-serif;
-  cursor: pointer;
-  box-shadow: 0 2px 10px rgba(214, 51, 132, 0.35);
-}
-
-#reset:hover,
-#download:hover {
-  background: #b82a70;
 }
 
 #message {

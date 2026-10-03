@@ -30,7 +30,7 @@ function layout() {
   if (!n) return;
 
   var mobile = window.innerWidth <= MOBILE_MAX;
-  var gap = mobile ? 4 : 6;
+  var gap = 3;
   var target = mobile ? 150 : 240;
   var width = photos.clientWidth;
 
@@ -167,7 +167,7 @@ function showMessage(text) {
 
 // ---- remember the arrangement in this browser ------------------------------
 // config/images.json is the starting point; your changes are kept in localStorage
-// so a refresh keeps them. "Reset" goes back to config/images.json.
+// so a refresh keeps them.
 
 var STORAGE_KEY = 'photo-grid-order';
 
@@ -216,23 +216,6 @@ fetch(CONFIG_URL)
     showMessage('Could not load ' + CONFIG_URL + '. Open the page through a web server ' +
       '(GitHub Pages, or "npx serve" / "python -m http.server" locally), not by double-clicking the file.');
   });
-
-// ---- download the current order + ratios as images.json -------------------
-// A static site cannot write files, so rearrange, download, then replace config/images.json.
-
-document.getElementById('download').addEventListener('click', function () {
-  var url = URL.createObjectURL(new Blob([JSON.stringify(currentData(), null, 2) + '\n'], { type: 'application/json' }));
-  var a = document.createElement('a');
-  a.href = url;
-  a.download = 'images.json';
-  a.click();
-  URL.revokeObjectURL(url);
-});
-
-document.getElementById('reset').addEventListener('click', function () {
-  try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* storage blocked */ }
-  location.reload();
-});
 
 // ---- touch: tap a photo to show its controls ----------------------------
 
