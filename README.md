@@ -1,1 +1,0 @@
-# pavithra-memories-1910
