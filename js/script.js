@@ -224,10 +224,13 @@ function clearActive() {
   if (current) current.classList.remove('active');
 }
 
+var tapWasActive = false;
+
 document.addEventListener('pointerdown', function (e) {
   if (e.pointerType === 'mouse') return;
   var item = e.target.closest && e.target.closest('.item');
-  if (item && item.classList.contains('active')) return;
+  tapWasActive = !!(item && item.classList.contains('active'));
+  if (tapWasActive) return;
   clearActive();
   if (item) item.classList.add('active');
 });
@@ -240,6 +243,7 @@ document.addEventListener('pointerdown', function (e) {
 var drag = null;
 
 photos.addEventListener('pointerdown', function (e) {
+  justDragged = false;
   var item = e.target.closest('.item');
   if (!item || e.button > 0) return;
   if (e.target.closest('button')) return;
@@ -248,12 +252,15 @@ photos.addEventListener('pointerdown', function (e) {
 
   var rect = item.getBoundingClientRect();
   drag = {
+    moved: false,
     item: item,
     id: e.pointerId,
     grabX: e.clientX - rect.left,
     grabY: e.clientY - rect.top,
     x: e.clientX,
     y: e.clientY,
+    startX: e.clientX,
+    startY: e.clientY,
     lastTarget: null
   };
   item.classList.add('dragging');
@@ -306,6 +313,7 @@ function edgeScroll() {
 
 photos.addEventListener('pointermove', function (e) {
   if (!drag || e.pointerId !== drag.id) return;
+  if (Math.abs(e.clientX - drag.startX) > 4 || Math.abs(e.clientY - drag.startY) > 4) drag.moved = true;
   drag.x = e.clientX;
   drag.y = e.clientY;
   moveDrag();
@@ -315,10 +323,59 @@ function endDrag(e) {
   if (!drag || e.pointerId !== drag.id) return;
   drag.item.classList.remove('dragging');
   drag.item.style.transform = '';
+  justDragged = drag.moved;
   drag = null;
   layout();
   saveLocal();
 }
+
+// ---- click a photo to see it fully ---------------------------------------
+// Mouse: a click opens it. Touch: first tap shows the controls, a tap on the
+// already-active photo opens it.
+
+var justDragged = false;
+
+var lightbox = document.createElement('div');
+lightbox.id = 'lightbox';
+lightbox.hidden = true;
+var lightboxImg = document.createElement('img');
+var closeBtn = document.createElement('button');
+closeBtn.type = 'button';
+closeBtn.id = 'lightbox-close';
+closeBtn.title = 'Close';
+closeBtn.textContent = '×';
+lightbox.appendChild(lightboxImg);
+lightbox.appendChild(closeBtn);
+document.body.appendChild(lightbox);
+
+function openLightbox(item) {
+  lightboxImg.src = IMAGE_DIR + item.file;
+  lightboxImg.alt = item.file;
+  lightbox.hidden = false;
+  document.body.classList.add('no-scroll');
+}
+
+function closeLightbox() {
+  lightbox.hidden = true;
+  lightboxImg.removeAttribute('src');
+  document.body.classList.remove('no-scroll');
+}
+
+closeBtn.addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', function (e) {
+  if (e.target === lightbox) closeLightbox();
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && !lightbox.hidden) closeLightbox();
+});
+
+photos.addEventListener('click', function (e) {
+  var item = e.target.closest('.item');
+  if (!item || e.target.closest('.controls')) return;
+  if (justDragged) { justDragged = false; return; }
+  if (e.pointerType && e.pointerType !== 'mouse' && !tapWasActive) return;
+  openLightbox(item);
+});
 
 photos.addEventListener('pointerup', endDrag);
 photos.addEventListener('pointercancel', endDrag);
