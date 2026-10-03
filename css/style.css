@@ -57,12 +57,16 @@ body {
   left: 8px;
   right: 8px;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 4px;
+  align-items: center;
+  gap: 6px;
   opacity: 0;
+  transform: translateY(-4px);
   pointer-events: none;
-  transition: opacity 0.2s;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.controls .label {
+  margin-right: auto;
 }
 
 /* desktop: show on hover. touch: show only on the photo that was tapped. */
@@ -70,54 +74,83 @@ body {
 .item.active .controls,
 .item.dragging .controls {
   opacity: 1;
+  transform: none;
   pointer-events: auto;
 }
 
 @media (hover: none) {
   .item:hover:not(.active):not(.dragging) .controls {
     opacity: 0;
+    transform: translateY(-4px);
     pointer-events: none;
   }
 }
 
+/* frosted-glass look shared by the pill and the round buttons */
+.controls button,
+.controls .handle,
+.controls .label {
+  background: rgba(20, 20, 24, 0.38);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
+  backdrop-filter: blur(10px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
 .controls button,
 .controls .handle {
-  width: 28px;
-  height: 28px;
-  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  font-size: 18px;
-  line-height: 28px;
-  text-align: center;
+  font: 300 20px/1 system-ui, sans-serif;
   cursor: pointer;
   padding: 0;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .controls .handle {
   cursor: grab;
   touch-action: none; /* lets touch users drag without the page scrolling */
-  font-size: 16px;
+  font-size: 15px;
 }
 
-.controls button:hover:not(:disabled) {
-  background: rgba(0, 0, 0, 0.85);
+.controls button:hover:not(:disabled),
+.controls .handle:hover {
+  background: rgba(20, 20, 24, 0.65);
+  transform: scale(1.08);
 }
 
 .controls button:disabled {
-  opacity: 0.4;
+  opacity: 0.35;
   cursor: default;
 }
 
-.controls span {
-  align-self: center;
-  padding: 0 8px;
-  border-radius: 14px;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  font: 12px/28px sans-serif;
+.controls .label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  height: 30px;
+  box-sizing: border-box;
+  padding: 0 12px;
+  border-radius: 15px;
+  align-items: center;
+  font: 500 12px/1 system-ui, sans-serif;
+  letter-spacing: 0.02em;
   white-space: nowrap;
+}
+
+.controls .label b {
+  font-weight: 700;
+}
+
+.controls .label i {
+  font-style: normal;
+  opacity: 0.7;
+  font-size: 11px;
 }
 
 @media (max-width: 700px) {
@@ -125,17 +158,28 @@ body {
     --pad: 5px;
   }
 
+  .controls {
+    top: 6px;
+    left: 6px;
+    right: 6px;
+    gap: 4px;
+  }
+
   .controls button,
   .controls .handle {
     width: 26px;
     height: 26px;
-    line-height: 26px;
+    font-size: 17px;
   }
 
-  .controls span {
+  .controls .label {
+    height: 26px;
+    padding: 0 9px;
     font-size: 11px;
-    line-height: 26px;
-    padding: 0 6px;
+  }
+
+  .controls .label i {
+    display: none;
   }
 }
 
@@ -146,8 +190,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--pad);
-  background: #fff;
+  padding: 56px 16px 16px;
+  background: rgba(12, 12, 16, 0.92);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  animation: lb-fade 0.25s ease;
 }
 
 #lightbox[hidden] {
@@ -158,26 +205,43 @@ body {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: lb-zoom 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 #lightbox-close {
   position: absolute;
   top: 12px;
-  right: 12px;
-  width: 40px;
-  height: 40px;
-  border: none;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(255, 255, 255, 0.12);
   color: #fff;
-  font-size: 28px;
-  line-height: 40px;
-  padding: 0;
+  font: 300 26px/1 system-ui, sans-serif;
+  padding: 0 0 3px;
   cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
 }
 
 #lightbox-close:hover {
-  background: #000;
+  background: rgba(255, 255, 255, 0.28);
+  transform: rotate(90deg);
+}
+
+@keyframes lb-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes lb-zoom {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: none; }
 }
 
 .no-scroll {

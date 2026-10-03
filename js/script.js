@@ -99,7 +99,8 @@ window.addEventListener('resize', function () {
 
 function applyRatio(item) {
   var r = RATIOS[item.ratioIndex];
-  item.label.textContent = r.name + ' · ' + r.w + ' × ' + r.h;
+  item.labelName.textContent = r.name;
+  item.labelSize.textContent = r.w + ' × ' + r.h;
   item.minus.disabled = item.ratioIndex === 0;
   item.plus.disabled = item.ratioIndex === RATIOS.length - 1;
 }
@@ -138,6 +139,11 @@ function buildItem(entry) {
   var controls = document.createElement('div');
   controls.className = 'controls';
   item.label = document.createElement('span');
+  item.label.className = 'label';
+  item.labelName = document.createElement('b');
+  item.labelSize = document.createElement('i');
+  item.label.appendChild(item.labelName);
+  item.label.appendChild(item.labelSize);
   item.minus = makeButton('−', 'Previous ratio');
   item.plus = makeButton('+', 'Next ratio');
   item.minus.addEventListener('click', function () { step(item, -1); });
