@@ -20,54 +20,36 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Dreamy night sky: the page itself fades from deep navy at the top, through purple and
-   a violet-pink, into warm cream at the very end (where the closing message sits).
-   The body background is passed to the page canvas, so it spans the whole scroll height. */
+/* Night sky: the page itself runs from deep navy through indigo into dark purple, top to bottom,
+   slightly lighter around the gallery. The body background is passed to the page canvas, so it
+   spans the whole scroll height, however long the page grows, and nothing covers it. The stars and nebulae are drawn by js/sky.js onto .sky, fixed behind it all. */
 body {
   margin: 0;
   min-height: 100vh;
   background: linear-gradient(180deg,
-    #101733 0%, #171c42 10%, #2c2a5c 30%, #46336d 52%,
-    #8a6a92 70%, #d8bfc6 84%, #f1e6dd 93%, #f6efe7 100%);
+    #050818 0%, #0a0f2e 18%, #121544 40%, #1b1752 62%,
+    #231a58 80%, #1c1448 100%);
   color: var(--ink);
   font-family: var(--sans);
 }
 
-/* Both layers are fixed behind the content (photos are opaque, so nothing shows over them).
-   ::before = a few big, soft glows like distant nebulae. ::after = tiny stars, in tiles of
-   different sizes so no repeat pattern shows, and white-on-cream they simply disappear down by the closing message. */
-body::before,
-body::after {
-  content: '';
+.sky {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
   z-index: -1;
+  overflow: hidden;
   pointer-events: none;
 }
 
-body::before {
-  background:
-    radial-gradient(38vmax 30vmax at 14% 12%, rgba(150, 120, 220, 0.20), transparent 70%),
-    radial-gradient(34vmax 28vmax at 88% 30%, rgba(214, 140, 176, 0.16), transparent 70%),
-    radial-gradient(40vmax 30vmax at 55% 78%, rgba(120, 140, 230, 0.12), transparent 70%),
-    radial-gradient(26vmax 20vmax at 80% 92%, rgba(255, 214, 180, 0.14), transparent 70%);
+.sky canvas {
+  display: block;
 }
 
-body::after {
-  background-image:
-    radial-gradient(1px 1px at 23px 41px, rgba(255, 255, 255, 0.75), transparent),
-    radial-gradient(1px 1px at 97px 163px, rgba(255, 255, 255, 0.55), transparent),
-    radial-gradient(1px 1px at 181px 87px, rgba(255, 255, 255, 0.65), transparent),
-    radial-gradient(1px 1px at 139px 211px, rgba(255, 255, 255, 0.5), transparent),
-    radial-gradient(1.5px 1.5px at 61px 117px, rgba(255, 255, 255, 0.7), transparent),
-    radial-gradient(1.2px 1.2px at 311px 233px, rgba(255, 244, 230, 0.8), transparent),
-    radial-gradient(1px 1px at 199px 299px, rgba(255, 255, 255, 0.55), transparent),
-    radial-gradient(1.5px 1.5px at 421px 59px, rgba(255, 236, 244, 0.75), transparent),
-    radial-gradient(1px 1px at 367px 391px, rgba(255, 255, 255, 0.6), transparent);
-  background-size:
-    233px 233px, 233px 233px, 233px 233px, 233px 233px, 233px 233px,
-    347px 347px, 347px 347px,
-    463px 463px, 463px 463px;
+/* the few stars that twinkle: a slow, small change in brightness, never a flash */
+.sky-twinkle {
+  position: absolute;
+  border-radius: 50%;
   animation: twinkle 7s ease-in-out infinite alternate;
 }
 
@@ -75,10 +57,10 @@ body::after {
   from { opacity: 0.55; }
   to { opacity: 1; }
 }
-
-/* the hero and gallery heading sit on the dark upper sky, so their text turns light */
+/* every text block sits straight on the night sky, so its text is light */
 .hero,
-.gallery-intro {
+.gallery-intro,
+.closing {
   --ink: #fff;
   --soft: rgba(255, 255, 255, 0.72);
   --rose: #e2a3ab;
@@ -128,9 +110,10 @@ body::after {
 }
 
 .hero p {
-  margin: 18px 0 0;
-  font: italic 400 clamp(16px, 4vw, 19px)/1.5 var(--serif);
-  color: var(--soft);
+  margin: 20px 0 0;
+  font: 300 clamp(14px, 3.8vw, 17px)/1.6 var(--sans);
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.62);
 }
 
 /* the one small frosted element here */
@@ -537,16 +520,18 @@ body::after {
 }
 
 .closing-soft {
-  margin-top: 24px !important;
-  font: italic 400 18px/1.4 var(--serif);
-  color: var(--soft);
+  margin-top: 26px !important;
+  font: 300 15px/1.5 var(--sans);
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.62);
 }
 
 .closing-text {
-  max-width: 24em;
-  margin-top: 10px !important;
-  font: italic 400 clamp(16px, 4vw, 19px)/1.6 var(--serif);
-  color: var(--soft);
+  max-width: 25em;
+  margin-top: 12px !important;
+  font: 300 clamp(14px, 3.8vw, 17px)/1.75 var(--sans);
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.62);
 }
 
 .closing-heart {
@@ -735,7 +720,8 @@ body::after {
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .birthday-loader-ring { animation: none; }
+  .birthday-loader-ring,
+  .sky-twinkle { animation: none; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
