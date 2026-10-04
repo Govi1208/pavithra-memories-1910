@@ -50,21 +50,82 @@
     c.fillRect(x - r, y - r, r * 2, r * 2);
   }
 
+  // A coarse grid of summed light + dust, painted with random dither so it has no banding.
+  function makeField(W, H) {
+    var CELL = 4, gw = Math.ceil(W / CELL) + 2, gh = Math.ceil(H / CELL) + 2;
+    var R = new Float32Array(gw * gh), G = new Float32Array(gw * gh), B = new Float32Array(gw * gh);
+    var D = new Float32Array(gw * gh);
+
+    function splat(x, y, r, add) { // soft round falloff, exactly zero at the edge
+      var gx0 = Math.max(0, Math.floor((x - r) / CELL)), gx1 = Math.min(gw - 1, Math.ceil((x + r) / CELL));
+      var gy0 = Math.max(0, Math.floor((y - r) / CELL)), gy1 = Math.min(gh - 1, Math.ceil((y + r) / CELL));
+      var r2 = r * r, gxi, gyi, dx, dy, t, f;
+      for (gyi = gy0; gyi <= gy1; gyi++) {
+        dy = gyi * CELL - y;
+        for (gxi = gx0; gxi <= gx1; gxi++) {
+          dx = gxi * CELL - x;
+          t = (dx * dx + dy * dy) / r2;
+          if (t < 1) { f = (1 - t) * (1 - t); add(gyi * gw + gxi, f); }
+        }
+      }
+    }
+
+    return {
+      light: function (x, y, r, rgb, a) {
+        var c = rgb.split(','), cr = a * c[0] / 255, cg = a * c[1] / 255, cb = a * c[2] / 255;
+        splat(x, y, r, function (k, f) { R[k] += cr * f; G[k] += cg * f; B[k] += cb * f; });
+      },
+      dust: function (x, y, r, a) {
+        splat(x, y, r, function (k, f) { D[k] = Math.min(0.9, D[k] + a * f); });
+      },
+      paint: function (target) {
+        var off = document.createElement('canvas');
+        off.width = W; off.height = H;
+        var oc = off.getContext('2d'), img = oc.createImageData(W, H), px = img.data;
+        var x, y, o = 0, gx, gy, i0, fx, fy, w00, w10, w01, w11, k, r, g, b, d, al, A, inv;
+        var xi = new Int32Array(W), xf = new Float32Array(W);
+        for (x = 0; x < W; x++) { xi[x] = Math.floor(x / CELL); xf[x] = x / CELL - xi[x]; }
+        for (y = 0; y < H; y++) {
+          gy = Math.floor(y / CELL); fy = y / CELL - gy;
+          for (x = 0; x < W; x++, o += 4) {
+            k = gy * gw + xi[x]; fx = xf[x];
+            w00 = (1 - fx) * (1 - fy); w10 = fx * (1 - fy); w01 = (1 - fx) * fy; w11 = fx * fy;
+            r = R[k] * w00 + R[k + 1] * w10 + R[k + gw] * w01 + R[k + gw + 1] * w11;
+            g = G[k] * w00 + G[k + 1] * w10 + G[k + gw] * w01 + G[k + gw + 1] * w11;
+            b = B[k] * w00 + B[k + 1] * w10 + B[k + gw] * w01 + B[k + gw + 1] * w11;
+            d = D[k] * w00 + D[k + 1] * w10 + D[k + gw] * w01 + D[k + gw + 1] * w11;
+            al = Math.max(r, g, b);
+            if (al < 0.0004 && d < 0.0004) continue;
+            // dust (dark) sits over the light: premultiplied colour, then back to straight alpha
+            A = d + al * (1 - d);
+            inv = al > 0 ? (1 - d) / A : 0;
+            px[o] = (r / (al || 1) * 255 * al * inv) + 4 * d / A;
+            px[o + 1] = (g / (al || 1) * 255 * al * inv) + 5 * d / A;
+            px[o + 2] = (b / (al || 1) * 255 * al * inv) + 22 * d / A;
+            px[o + 3] = Math.floor(A * 255 + Math.random()); // random rounding = dither
+          }
+        }
+        oc.putImageData(img, 0, 0);
+        target.drawImage(off, 0, 0, W, H);
+      }
+    };
+  }
   // ---- the sky ---------------------------------------------------------------
 
   function draw() {
     var W = Math.ceil(window.innerWidth);
     var H = Math.ceil(window.innerHeight);
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var dpr = Math.min(window.devicePixelRatio || 1, 3);
     drawnW = W; drawnH = H;
 
     canvas.width = Math.round(W * dpr);
     canvas.height = Math.round(H * dpr);
-    canvas.style.width = W + 'px';
-    canvas.style.height = H + 'px';
+    // CSS size = exact device pixels / dpr, so the browser never has to resample the canvas
+    canvas.style.width = canvas.width / dpr + 'px';
+    canvas.style.height = canvas.height / dpr + 'px';
     sky.style.width = W + 'px';
     sky.style.height = H + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.setTransform(canvas.width / W, 0, 0, canvas.height / H, 0, 0);
     ctx.clearRect(0, 0, W, H);
     Array.prototype.slice.call(sky.querySelectorAll('.sky-twinkle')).forEach(function (n) { n.remove(); });
 
@@ -93,36 +154,34 @@
       return Math.exp(-(dist * dist) / (2 * bandW * bandW));
     }
 
-    // 1) haze and nebula clouds: many huge, very faint radial gradients layered on top of each
-    //    other, which is what gives the soft cloudy look (and costs nothing after this one draw)
-    var hc = ctx;
-    hc.globalCompositeOperation = 'lighter';
+    // 1) haze and nebula clouds. They are summed in floating point on a coarse grid, then written
+    //    out with random grain. (Stacking many faint gradients on the canvas itself shows the
+    //    browser's regular dithering pattern as fine scanlines; random grain looks like film.)
+    var field = makeField(W, H);
     var i, p, n;
 
     for (i = 0; i < 70; i++) { // Milky Way glow, patchy rather than a smooth stripe
       p = bandPoint(0.9);
       n = fbm((p[0] / W) * aspect * 2.4 + 3, (p[1] / H) * 2.4 + 9);
-      blob(hc, p[0], p[1], bandW * (0.5 + rand() * 0.8),
-        rand() < 0.7 ? '165,180,235' : '235,200,185', (0.009 + rand() * 0.016) * (0.3 + 1.6 * n));
+      field.light(p[0], p[1], bandW * (0.5 + rand() * 0.8),
+        rand() < 0.7 ? '165,180,235' : '235,200,185', (0.009 + rand() * 0.015) * (0.3 + 1.6 * n));
     }
 
     var palette = ['70,100,210', '120,85,200', '190,100,165', '70,100,210', '110,80,190'];
     for (i = 0; i < 6; i++) { // nebula clusters: several overlapping clouds each
       var cx = rand() * W, cy = rand() * H, hue = pick(palette, rand);
       for (n = 0; n < 9; n++) {
-        blob(hc, cx + gauss(rand) * 0.22 * big, cy + gauss(rand) * 0.16 * big,
-          (0.12 + rand() * 0.22) * big, hue, 0.014 + rand() * 0.026);
+        field.light(cx + gauss(rand) * 0.22 * big, cy + gauss(rand) * 0.16 * big,
+          (0.12 + rand() * 0.22) * big, hue, 0.015 + rand() * 0.026);
       }
     }
 
-    hc.globalCompositeOperation = 'source-over';
     for (i = 0; i < 16; i++) { // thin dark dust drifting through the band
       p = bandPoint(0.55);
-      blob(hc, p[0], p[1], bandW * (0.25 + rand() * 0.4), '4,5,22', 0.09 + rand() * 0.07);
+      field.dust(p[0], p[1], bandW * (0.25 + rand() * 0.4), 0.09 + rand() * 0.07);
     }
 
-    hc.globalCompositeOperation = 'source-over';
-
+    field.paint(ctx);
     // 2) stars
     function dot(x, y, r, alpha, rgb) {
       ctx.fillStyle = 'rgba(' + rgb + ',' + alpha + ')';
