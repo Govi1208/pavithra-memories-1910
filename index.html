@@ -4,15 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#101733">
+  <script>
+    // Decide before anything paints: a visitor who already unlocked in this browser session skips the gate.
+    try { if (sessionStorage.getItem('birthdayUnlocked') !== 'true') document.documentElement.classList.add('locked'); }
+    catch (e) { document.documentElement.classList.add('locked'); }
+  </script>
   <title>For You, Pavithra</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext x='16' y='25' font-size='24' text-anchor='middle' fill='%23b5656b'%3E%E2%99%A5%3C/text%3E%3C/svg%3E">
   <link rel="preload" as="image" href="images/thumbs/Loader.jpg">
-  <link rel="stylesheet" href="css/style.css?v=20261004a">
+  <link rel="stylesheet" href="css/style.css?v=20261004b">
   <noscript><style>.birthday-loader { display: none; } html.no-scroll { overflow: auto; }</style></noscript>
 </head>
 <body>
 
 <div class="sky" aria-hidden="true"><canvas></canvas></div>
+
+<div class="gate" id="gate">
+  <form class="gate-form" id="gate-form" novalidate>
+    <span class="heart gate-heart" aria-hidden="true">&#9829;</span>
+    <h1>A little secret between us</h1>
+    <p>Enter the password to unlock our memories.</p>
+    <label class="gate-label" for="gate-input">Password</label>
+    <div class="gate-field" id="gate-field">
+      <input id="gate-input" type="password" placeholder="Enter password" autocomplete="off" autocapitalize="off" spellcheck="false" required>
+      <button type="button" class="gate-toggle" id="gate-toggle" aria-pressed="false" aria-label="Show password">Show</button>
+    </div>
+    <p class="gate-error" id="gate-error" role="alert"></p>
+    <button type="submit" class="gate-btn" id="gate-btn">Unlock Memories <span class="heart" aria-hidden="true">&#9829;</span></button>
+  </form>
+</div>
 
 <div class="birthday-loader" aria-hidden="true">
   <div class="birthday-loader-stage">
@@ -70,7 +90,8 @@
   </div>
 </div>
 
-<script src="js/sky.js?v=20261004a"></script>
-<script src="js/script.js?v=20261004a"></script>
+<script src="js/sky.js?v=20261004b"></script>
+<script src="js/gate.js?v=20261004b"></script>
+<script src="js/script.js?v=20261004b"></script>
 </body>
 </html>

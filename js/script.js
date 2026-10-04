@@ -7,10 +7,18 @@
     loader.remove();
     document.documentElement.classList.remove('no-scroll');
   }
-  setTimeout(function () {
-    loader.classList.add('birthday-loader-hidden');
-    setTimeout(remove, 650); // after the 0.6s fade
-  }, 3000);
+  function start() {
+    setTimeout(function () {
+      loader.classList.add('birthday-loader-hidden');
+      setTimeout(remove, 650); // after the 0.6s fade
+    }, 3000);
+  }
+  // behind the password gate the loader waits; js/gate.js announces the unlock
+  if (document.documentElement.classList.contains('locked')) {
+    document.addEventListener('birthday:unlocked', start, { once: true });
+  } else {
+    start();
+  }
 })();
 // Ratio steps, in the order given. A photo keeps its ratio; the layout stretches
 // each row a little so the row fills the full width with no gaps.
@@ -28,7 +36,7 @@ var RATIOS = [
 
 // Order, ratio and image of every photo live in config/images.json
 // bump this whenever config or images change, so phones don't keep an old cached copy
-var VERSION = '20261004a';
+var VERSION = '20261004b';
 var CONFIG_URL = 'config/images.json?v=' + VERSION;
 // Optional captions live in config/captions.json as { "image012.jpg": "text" }
 var CAPTIONS_URL = 'config/captions.json?v=' + VERSION;
