@@ -5,7 +5,8 @@
         "order": 1,
         "ratio": "original",
         "width": 1254,
-        "height": 1254
+        "height": 1254,
+        "favorite": false
     },
     {
         "id": 1,
@@ -13,7 +14,8 @@
         "order": 2,
         "ratio": "original",
         "width": 1086,
-        "height": 1448
+        "height": 1448,
+        "favorite": false
     },
     {
         "id": 41,
@@ -21,7 +23,8 @@
         "order": 3,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 2,
@@ -29,7 +32,8 @@
         "order": 4,
         "ratio": "original",
         "width": 941,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 42,
@@ -37,7 +41,8 @@
         "order": 5,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 6,
@@ -45,7 +50,8 @@
         "order": 6,
         "ratio": "original",
         "width": 1024,
-        "height": 1536
+        "height": 1536,
+        "favorite": false
     },
     {
         "id": 43,
@@ -53,7 +59,8 @@
         "order": 7,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 44,
@@ -61,7 +68,8 @@
         "order": 8,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 3,
@@ -69,7 +77,8 @@
         "order": 9,
         "ratio": "original",
         "width": 941,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 45,
@@ -77,7 +86,8 @@
         "order": 10,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 9,
@@ -85,7 +95,8 @@
         "order": 11,
         "ratio": "original",
         "width": 1448,
-        "height": 1086
+        "height": 1086,
+        "favorite": false
     },
     {
         "id": 46,
@@ -93,7 +104,8 @@
         "order": 12,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 4,
@@ -101,7 +113,8 @@
         "order": 13,
         "ratio": "original",
         "width": 941,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 47,
@@ -109,7 +122,8 @@
         "order": 14,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 48,
@@ -117,7 +131,8 @@
         "order": 15,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 14,
@@ -125,7 +140,8 @@
         "order": 16,
         "ratio": "original",
         "width": 1122,
-        "height": 1402
+        "height": 1402,
+        "favorite": false
     },
     {
         "id": 49,
@@ -133,7 +149,8 @@
         "order": 17,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 5,
@@ -141,7 +158,8 @@
         "order": 18,
         "ratio": "original",
         "width": 941,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 50,
@@ -149,7 +167,8 @@
         "order": 19,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 51,
@@ -157,7 +176,8 @@
         "order": 20,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 15,
@@ -165,7 +185,8 @@
         "order": 21,
         "ratio": "original",
         "width": 1122,
-        "height": 1402
+        "height": 1402,
+        "favorite": false
     },
     {
         "id": 52,
@@ -173,7 +194,8 @@
         "order": 22,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 7,
@@ -181,7 +203,8 @@
         "order": 23,
         "ratio": "original",
         "width": 940,
-        "height": 1673
+        "height": 1673,
+        "favorite": false
     },
     {
         "id": 53,
@@ -189,7 +212,8 @@
         "order": 24,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 16,
@@ -197,7 +221,8 @@
         "order": 25,
         "ratio": "original",
         "width": 1122,
-        "height": 1402
+        "height": 1402,
+        "favorite": false
     },
     {
         "id": 54,
@@ -205,7 +230,8 @@
         "order": 26,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 55,
@@ -213,7 +239,8 @@
         "order": 27,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 10,
@@ -221,7 +248,8 @@
         "order": 28,
         "ratio": "original",
         "width": 941,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 56,
@@ -229,7 +257,8 @@
         "order": 29,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 17,
@@ -237,7 +266,8 @@
         "order": 30,
         "ratio": "original",
         "width": 1536,
-        "height": 1024
+        "height": 1024,
+        "favorite": false
     },
     {
         "id": 57,
@@ -245,7 +275,8 @@
         "order": 31,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 11,
@@ -253,7 +284,8 @@
         "order": 32,
         "ratio": "original",
         "width": 941,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 58,
@@ -261,7 +293,8 @@
         "order": 33,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 59,
@@ -269,7 +302,8 @@
         "order": 34,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 20,
@@ -277,7 +311,8 @@
         "order": 35,
         "ratio": "original",
         "width": 1672,
-        "height": 941
+        "height": 941,
+        "favorite": false
     },
     {
         "id": 60,
@@ -285,7 +320,8 @@
         "order": 36,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 12,
@@ -293,7 +329,8 @@
         "order": 37,
         "ratio": "original",
         "width": 941,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 61,
@@ -301,7 +338,8 @@
         "order": 38,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 21,
@@ -309,7 +347,8 @@
         "order": 39,
         "ratio": "original",
         "width": 1122,
-        "height": 1402
+        "height": 1402,
+        "favorite": false
     },
     {
         "id": 62,
@@ -317,7 +356,8 @@
         "order": 40,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 63,
@@ -325,7 +365,8 @@
         "order": 41,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 13,
@@ -333,7 +374,8 @@
         "order": 42,
         "ratio": "original",
         "width": 941,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 64,
@@ -341,7 +383,8 @@
         "order": 43,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 18,
@@ -349,7 +392,8 @@
         "order": 44,
         "ratio": "original",
         "width": 941,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 65,
@@ -357,7 +401,8 @@
         "order": 45,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 66,
@@ -365,7 +410,8 @@
         "order": 46,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 19,
@@ -373,7 +419,8 @@
         "order": 47,
         "ratio": "original",
         "width": 941,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 67,
@@ -381,7 +428,8 @@
         "order": 48,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 22,
@@ -389,7 +437,8 @@
         "order": 49,
         "ratio": "original",
         "width": 941,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 68,
@@ -397,7 +446,8 @@
         "order": 50,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 30,
@@ -405,7 +455,8 @@
         "order": 51,
         "ratio": "original",
         "width": 1122,
-        "height": 1402
+        "height": 1402,
+        "favorite": false
     },
     {
         "id": 69,
@@ -413,7 +464,8 @@
         "order": 52,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 70,
@@ -421,7 +473,8 @@
         "order": 53,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 23,
@@ -429,7 +482,8 @@
         "order": 54,
         "ratio": "original",
         "width": 941,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 71,
@@ -437,7 +491,8 @@
         "order": 55,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 32,
@@ -445,7 +500,8 @@
         "order": 56,
         "ratio": "original",
         "width": 1122,
-        "height": 1402
+        "height": 1402,
+        "favorite": false
     },
     {
         "id": 72,
@@ -453,7 +509,8 @@
         "order": 57,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 24,
@@ -461,7 +518,8 @@
         "order": 58,
         "ratio": "original",
         "width": 941,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 73,
@@ -469,7 +527,8 @@
         "order": 59,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 74,
@@ -477,7 +536,8 @@
         "order": 60,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 33,
@@ -485,7 +545,8 @@
         "order": 61,
         "ratio": "original",
         "width": 1122,
-        "height": 1402
+        "height": 1402,
+        "favorite": false
     },
     {
         "id": 75,
@@ -493,7 +554,8 @@
         "order": 62,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 25,
@@ -501,7 +563,8 @@
         "order": 63,
         "ratio": "original",
         "width": 941,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 76,
@@ -509,7 +572,8 @@
         "order": 64,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 34,
@@ -517,7 +581,8 @@
         "order": 65,
         "ratio": "original",
         "width": 1122,
-        "height": 1402
+        "height": 1402,
+        "favorite": false
     },
     {
         "id": 77,
@@ -525,7 +590,8 @@
         "order": 66,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 78,
@@ -533,7 +599,8 @@
         "order": 67,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 26,
@@ -541,7 +608,8 @@
         "order": 68,
         "ratio": "original",
         "width": 768,
-        "height": 1376
+        "height": 1376,
+        "favorite": false
     },
     {
         "id": 79,
@@ -549,7 +617,8 @@
         "order": 69,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 35,
@@ -557,7 +626,8 @@
         "order": 70,
         "ratio": "original",
         "width": 1122,
-        "height": 1402
+        "height": 1402,
+        "favorite": false
     },
     {
         "id": 80,
@@ -565,7 +635,8 @@
         "order": 71,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 27,
@@ -573,7 +644,8 @@
         "order": 72,
         "ratio": "original",
         "width": 900,
-        "height": 1600
+        "height": 1600,
+        "favorite": false
     },
     {
         "id": 81,
@@ -581,7 +653,8 @@
         "order": 73,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 82,
@@ -589,7 +662,8 @@
         "order": 74,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 36,
@@ -597,7 +671,8 @@
         "order": 75,
         "ratio": "original",
         "width": 421,
-        "height": 633
+        "height": 633,
+        "favorite": false
     },
     {
         "id": 83,
@@ -605,7 +680,8 @@
         "order": 76,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 28,
@@ -613,7 +689,8 @@
         "order": 77,
         "ratio": "original",
         "width": 941,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 84,
@@ -621,7 +698,8 @@
         "order": 78,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 85,
@@ -629,7 +707,8 @@
         "order": 79,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 37,
@@ -637,7 +716,8 @@
         "order": 80,
         "ratio": "original",
         "width": 1402,
-        "height": 1122
+        "height": 1122,
+        "favorite": false
     },
     {
         "id": 86,
@@ -645,7 +725,8 @@
         "order": 81,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 29,
@@ -653,7 +734,8 @@
         "order": 82,
         "ratio": "original",
         "width": 941,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 87,
@@ -661,7 +743,8 @@
         "order": 83,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 38,
@@ -669,7 +752,8 @@
         "order": 84,
         "ratio": "original",
         "width": 1122,
-        "height": 1402
+        "height": 1402,
+        "favorite": false
     },
     {
         "id": 88,
@@ -677,7 +761,8 @@
         "order": 85,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 89,
@@ -685,7 +770,8 @@
         "order": 86,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 31,
@@ -693,7 +779,8 @@
         "order": 87,
         "ratio": "original",
         "width": 941,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 90,
@@ -701,7 +788,8 @@
         "order": 88,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 39,
@@ -709,7 +797,8 @@
         "order": 89,
         "ratio": "original",
         "width": 940,
-        "height": 1672
+        "height": 1672,
+        "favorite": false
     },
     {
         "id": 91,
@@ -717,7 +806,8 @@
         "order": 90,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 40,
@@ -725,7 +815,8 @@
         "order": 91,
         "ratio": "original",
         "width": 356,
-        "height": 633
+        "height": 633,
+        "favorite": false
     },
     {
         "id": 92,
@@ -733,7 +824,8 @@
         "order": 92,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 93,
@@ -741,7 +833,8 @@
         "order": 93,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 94,
@@ -749,7 +842,8 @@
         "order": 94,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 95,
@@ -757,7 +851,8 @@
         "order": 95,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 96,
@@ -765,7 +860,8 @@
         "order": 96,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 97,
@@ -773,7 +869,8 @@
         "order": 97,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 98,
@@ -781,7 +878,8 @@
         "order": 98,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 99,
@@ -789,7 +887,8 @@
         "order": 99,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     },
     {
         "id": 100,
@@ -797,6 +896,7 @@
         "order": 100,
         "ratio": "original",
         "width": 1200,
-        "height": 1200
+        "height": 1200,
+        "favorite": false
     }
 ]

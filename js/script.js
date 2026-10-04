@@ -36,7 +36,7 @@ var RATIOS = [
 
 // Order, ratio and image of every photo live in config/images.json
 // bump this whenever config or images change, so phones don't keep an old cached copy
-var VERSION = '20261004b';
+var VERSION = '20261004d';
 var CONFIG_URL = 'config/images.json?v=' + VERSION;
 // Optional captions live in config/captions.json as { "image012.jpg": "text" }
 var CAPTIONS_URL = 'config/captions.json?v=' + VERSION;
@@ -50,6 +50,12 @@ var VIEWER_RATIOS = ['1:1', '4:5', '9:16', '16:9', '21:9'];
 
 var photos = document.getElementById('photos');
 var captions = {};
+
+// Favourites: config/images.json gives each photo's starting `favorite`; what the visitor
+// toggles is kept in localStorage under this key ({ "<photo id>": true/false }) and wins.
+var FAVORITES_KEY = 'birthdayPhotoFavorites';
+var userFavorites = {};
+var filter = 'all'; // 'all' or 'fav'
 
 // A photo shows in its own shape (item.ratio === null, "original") unless a crop
 // shape was picked for it in the viewer.
@@ -66,9 +72,9 @@ function aspectOf(item) {
 // then scale each row to exactly the container width. Result: no gaps anywhere.
 
 function layout() {
-  var items = Array.prototype.slice.call(photos.children);
+  var items = Array.prototype.filter.call(photos.children, function (it) { return !it.hidden; });
   var n = items.length;
-  if (!n) return;
+  if (!n) { photos.style.height = '0px'; return; }
 
   var mobile = window.innerWidth <= MOBILE_MAX;
   var gap = mobile ? 4 : 8;
@@ -107,12 +113,16 @@ function layout() {
     end = start;
   }
 
-  var top = 0;
+  var top = 0, maxH = target * 2;
   bounds.forEach(function (b) {
     var count = b[1] - b[0];
     var sum = prefix[b[1]] - prefix[b[0]];
     var h = (width - gap * (count - 1)) / sum;
     var left = 0;
+    if (h > maxH) { // a very short list (say one favourite): keep it a sensible size and centre it
+      h = maxH;
+      left = (width - (sum * h + gap * (count - 1))) / 2;
+    }
     for (var k = b[0]; k < b[1]; k++) {
       var w = aspect[k] * h;
       var s = items[k].style;
@@ -161,9 +171,102 @@ function buildItem(entry) {
   item.setAttribute('role', 'button');
   item.setAttribute('aria-label', 'Open ' + item.img.alt);
 
+  item.favorite = !!entry.favorite;
+  item.defaultFavorite = !!entry.defaultFavorite;
+  item.favButton = document.createElement('button');
+  item.favButton.type = 'button';
+  item.favButton.className = 'fav';
+  // a heart press only toggles the favourite: it must not open the viewer or start a drag
+  item.favButton.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+  item.favButton.addEventListener('click', function (e) { e.stopPropagation(); toggleFavorite(item); });
+
   item.appendChild(item.img);
+  item.appendChild(item.favButton);
+  updateHeart(item);
   return item;
 }
+
+// ---- favourites -----------------------------------------------------------
+
+// Reads the saved choices. Anything that is not a plain { id: true/false } object (missing,
+// corrupted, edited by hand) is ignored rather than allowed to break the page.
+function loadFavorites() {
+  var clean = {}, saved;
+  try { saved = JSON.parse(localStorage.getItem(FAVORITES_KEY)); } catch (e) { return clean; }
+  if (!saved || typeof saved !== 'object' || Array.isArray(saved)) return clean;
+  Object.keys(saved).forEach(function (id) {
+    if (typeof saved[id] === 'boolean') clean[id] = saved[id];
+  });
+  return clean;
+}
+
+function saveFavorites() {
+  try { localStorage.setItem(FAVORITES_KEY, JSON.stringify(userFavorites)); } catch (e) { /* storage blocked */ }
+}
+
+function favoriteCount() {
+  return Array.prototype.filter.call(photos.children, function (it) { return it.favorite; }).length;
+}
+
+function updateHeart(item) {
+  item.favButton.textContent = item.favorite ? '♥' : '♡'; // ♥ / ♡
+  item.favButton.classList.toggle('on', item.favorite);
+  item.favButton.setAttribute('aria-pressed', String(item.favorite));
+  item.favButton.setAttribute('aria-label', item.favorite ? 'Remove from favorites' : 'Add to favorites');
+}
+
+function popHeart(button) {
+  button.classList.remove('pop');
+  void button.offsetWidth; // restart the animation
+  button.classList.add('pop');
+}
+
+// gallery heart, viewer heart, the Favorites count and the saved state all move together
+function toggleFavorite(item) {
+  item.favorite = !item.favorite;
+  if (item.favorite === item.defaultFavorite) delete userFavorites[item.photoId]; // back to the file's default
+  else userFavorites[item.photoId] = item.favorite;
+  saveFavorites();
+  updateHeart(item);
+  popHeart(item.favButton);
+  document.getElementById('fav-count').textContent = favoriteCount();
+  if (!lightbox.hidden && currentItem() === item) {
+    syncViewerHeart();
+    popHeart(lbFav);
+  }
+  // un-hearting inside the Favorites view removes it from the grid (but not mid-viewer)
+  if (filter === 'fav' && lightbox.hidden) applyFilter();
+}
+
+function applyFilter() {
+  var onlyFavorites = filter === 'fav', any = false;
+  Array.prototype.forEach.call(photos.children, function (item) {
+    item.hidden = onlyFavorites && !item.favorite;
+    if (!item.hidden) any = true;
+  });
+  // the "no favorites yet" message, but never while the photos are still loading
+  document.getElementById('gallery-empty').hidden = !(onlyFavorites && !any && photos.children.length > 0);
+  layout();
+}
+
+function setFilter(next) {
+  if (next === filter) return;
+  filter = next;
+  Array.prototype.forEach.call(document.querySelectorAll('.filter-btn'), function (btn) {
+    btn.setAttribute('aria-pressed', String(btn.dataset.filter === filter));
+  });
+  var wasReady = photos.classList.contains('ready');
+  photos.classList.remove('ready'); // no gliding between the two views, just a soft fade
+  applyFilter();
+  photos.classList.remove('refilter');
+  void photos.offsetWidth;
+  photos.classList.add('refilter');
+  if (wasReady) requestAnimationFrame(function () { photos.classList.add('ready'); });
+}
+
+Array.prototype.forEach.call(document.querySelectorAll('.filter-btn'), function (btn) {
+  btn.addEventListener('click', function () { setFilter(btn.dataset.filter); });
+});
 
 function showMessage(text) {
   var msg = document.getElementById('message');
@@ -182,7 +285,7 @@ function currentData() {
   return Array.prototype.map.call(photos.querySelectorAll('.item'), function (item, i) {
     return {
       id: item.photoId, image: item.file, order: i + 1, ratio: item.ratio || 'original',
-      width: item.width, height: item.height
+      width: item.width, height: item.height, favorite: item.favorite
     };
   });
 }
@@ -192,7 +295,10 @@ function saveLocal() {
 }
 
 function loadLocal() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) { return null; }
+  try {
+    var saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return Array.isArray(saved) ? saved.filter(function (s) { return s && typeof s === 'object' && 'id' in s; }) : null;
+  } catch (e) { return null; }
 }
 
 // apply saved order/ratio on top of the config; photos missing from the save go last
@@ -224,9 +330,18 @@ fetch(CONFIG_URL)
   })
   .then(function (entries) {
     entries = mergeSaved(entries, loadLocal());
+    userFavorites = loadFavorites();
+    entries = entries.map(function (e) { // the file's default, unless the visitor chose otherwise
+      var fromFile = e.favorite === true;
+      return Object.assign({}, e, {
+        defaultFavorite: fromFile,
+        favorite: userFavorites.hasOwnProperty(e.id) ? userFavorites[e.id] : fromFile
+      });
+    });
     entries.sort(function (a, b) { return a.order - b.order; });
     entries.forEach(function (entry) { photos.appendChild(buildItem(entry)); });
-    layout();
+    applyFilter(); // lays out, and respects a filter picked while the photos were still loading
+    document.getElementById('fav-count').textContent = favoriteCount();
     showClosing(entries.length);
     requestAnimationFrame(function () {
       requestAnimationFrame(function () { photos.classList.add('ready'); });
@@ -341,6 +456,7 @@ var lbImg = document.getElementById('lb-img');
 var lbCaption = document.getElementById('lb-caption');
 var lbCount = document.getElementById('lb-count');
 var lbRatios = document.getElementById('lb-ratios');
+var lbFav = document.getElementById('lb-fav');
 
 var viewer = { items: [], index: 0, token: 0 };
 var fullImages = {}; // file -> Image, only for the current photo and its neighbours
@@ -390,6 +506,14 @@ function onImgLoad() {
   lbFrame.classList.add('in');
 }
 
+function syncViewerHeart() {
+  var on = currentItem().favorite;
+  lbFav.textContent = on ? '♥' : '♡';
+  lbFav.classList.toggle('on', on);
+  lbFav.setAttribute('aria-pressed', String(on));
+  lbFav.setAttribute('aria-label', on ? 'Remove from favorites' : 'Add to favorites');
+}
+
 function loadFull(file) {
   var im = fullImages[file];
   if (!im) {
@@ -405,6 +529,7 @@ function show(i) {
   var item = viewer.items[viewer.index];
   var token = ++viewer.token;
   markRatio();
+  syncViewerHeart();
 
   // the gallery thumbnail is already cached, so something sharp-ish appears at once;
   // the full-resolution file replaces it as soon as it has loaded
@@ -438,7 +563,7 @@ function show(i) {
 }
 
 function openLightbox(item) {
-  viewer.items = Array.prototype.slice.call(photos.children);
+  viewer.items = Array.prototype.filter.call(photos.children, function (it) { return !it.hidden; }); // the filtered list
   lightbox.hidden = false;
   document.documentElement.classList.add('no-scroll');
   document.addEventListener('keydown', onViewerKey);
@@ -457,6 +582,7 @@ function closeLightbox() {
   document.documentElement.classList.remove('no-scroll');
   document.removeEventListener('keydown', onViewerKey);
   window.removeEventListener('resize', fitFrame);
+  if (filter === 'fav') applyFilter(); // photos un-hearted while viewing leave the Favorites grid now
   if (current) {
     current.focus({ preventScroll: true });
     current.scrollIntoView({ block: 'nearest', behavior: 'instant' });
@@ -477,6 +603,7 @@ function onViewerKey(e) {
 }
 
 document.getElementById('lb-close').addEventListener('click', closeLightbox);
+lbFav.addEventListener('click', function () { toggleFavorite(currentItem()); });
 document.getElementById('lb-prev').addEventListener('click', function () { show(viewer.index - 1); });
 document.getElementById('lb-next').addEventListener('click', function () { show(viewer.index + 1); });
 lightbox.addEventListener('click', function (e) {
