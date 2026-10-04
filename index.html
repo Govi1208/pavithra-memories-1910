@@ -1,14 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-scroll">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Photos</title>
+  <meta name="theme-color" content="#101733">
+  <title>For You, Pavithra</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext x='16' y='25' font-size='24' text-anchor='middle' fill='%23b5656b'%3E%E2%99%A5%3C/text%3E%3C/svg%3E">
+  <link rel="preload" as="image" href="images/thumbs/Loader.jpg">
   <link rel="stylesheet" href="css/style.css">
+  <noscript><style>.birthday-loader { display: none; } html.no-scroll { overflow: auto; }</style></noscript>
 </head>
 <body>
-<div id="photos"></div>
-<p id="message" hidden></p>
+
+<div class="birthday-loader" aria-hidden="true">
+  <div class="birthday-loader-stage">
+    <img class="birthday-loader-image" src="images/thumbs/Loader.jpg" alt="" width="700" height="700" draggable="false">
+    <svg class="birthday-loader-ring" viewBox="0 0 400 400" focusable="false">
+      <defs>
+        <path id="birthday-loader-circle" d="M 50,200 a 150,150 0 1,1 300,0 a 150,150 0 1,1 -300,0"/>
+      </defs>
+      <text class="birthday-loader-text">
+        <textPath href="#birthday-loader-circle" textLength="934" lengthAdjust="spacing">GovindaRajan <tspan>&#9829;</tspan> Pavithra <tspan>&#9829;</tspan> GovindaRajan <tspan>&#9829;</tspan> Pavithra <tspan>&#9829;</tspan> </textPath>
+      </text>
+    </svg>
+  </div>
+</div>
+<header class="hero">
+  <span class="heart" aria-hidden="true">♥</span>
+  <h1>For you, Pavithra</h1>
+  <p>A little collection of memories of you.</p>
+  <a class="hero-btn" href="#gallery">View Memories <span aria-hidden="true">↓</span></a>
+</header>
+
+<main id="gallery" class="gallery">
+  <div class="gallery-intro">
+    <h2>Memories <span class="heart" aria-hidden="true">♥</span></h2>
+    <p>A hundred little moments</p>
+    <span class="gallery-count"><span id="gallery-count">100</span> memories</span>
+  </div>
+  <div id="photos"></div>
+  <p id="message" hidden></p>
+</main>
+
+<section class="closing" id="closing" hidden>
+  <p class="closing-big">That's <span id="total-count">100</span> memories.</p>
+  <p class="closing-soft">But honestly&hellip;</p>
+  <p class="closing-text">These are only <span id="total-count-2">100</span> moments out of countless reasons why you mean so much to me.</p>
+  <p class="closing-heart heart" aria-hidden="true">♥</p>
+  <p class="closing-wish">Happy 20th Birthday, Pavithra.</p>
+  <p class="closing-sign">&mdash; Govind</p>
+</section>
+
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" hidden>
+  <button type="button" class="lb-btn lb-close" id="lb-close" aria-label="Close viewer">&times;</button>
+
+  <div class="lb-stage" id="lb-stage">
+    <div class="lb-frame" id="lb-frame"><img id="lb-img" alt="" draggable="false"></div>
+  </div>
+  <div class="lb-bottom">
+    <p class="lb-caption" id="lb-caption" hidden></p>
+    <div class="lb-ratios glass" id="lb-ratios" role="group" aria-label="Crop shape"></div>
+    <div class="lb-bar glass">
+      <button type="button" class="lb-nav" id="lb-prev" aria-label="Previous photo">&#8249;</button>
+      <p class="lb-count" id="lb-count" aria-live="polite"></p>
+      <button type="button" class="lb-nav" id="lb-next" aria-label="Next photo">&#8250;</button>
+    </div>
+  </div>
+</div>
+
 <script src="js/script.js"></script>
 </body>
 </html>

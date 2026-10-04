@@ -1,3 +1,17 @@
+// ---- opening loader: shown for about 3 seconds, then fades away ---------------
+// index.html starts with <html class="no-scroll">, so the page cannot scroll meanwhile.
+(function () {
+  var loader = document.querySelector('.birthday-loader');
+  if (!loader) return;
+  function remove() {
+    loader.remove();
+    document.documentElement.classList.remove('no-scroll');
+  }
+  setTimeout(function () {
+    loader.classList.add('birthday-loader-hidden');
+    setTimeout(remove, 650); // after the 0.6s fade
+  }, 3000);
+})();
 // Ratio steps, in the order given. A photo keeps its ratio; the layout stretches
 // each row a little so the row fills the full width with no gaps.
 var RATIOS = [
@@ -14,11 +28,28 @@ var RATIOS = [
 
 // Order, ratio and image of every photo live in config/images.json
 var CONFIG_URL = 'config/images.json';
+// Optional captions live in config/captions.json as { "image012.jpg": "text" }
+var CAPTIONS_URL = 'config/captions.json';
 var IMAGE_DIR = 'images/';
+var THUMB_DIR = 'images/thumbs/'; // small copies (same file names) used in the gallery
 
 var MOBILE_MAX = 700;
 
+// crop shapes offered in the viewer, looked up in RATIOS above
+var VIEWER_RATIOS = ['1:1', '4:5', '9:16', '16:9', '21:9'];
+
 var photos = document.getElementById('photos');
+var captions = {};
+
+// A photo shows in its own shape (item.ratio === null, "original") unless a crop
+// shape was picked for it in the viewer.
+function aspectOf(item) {
+  if (item.ratio) {
+    var r = RATIOS.find(function (x) { return x.name === item.ratio; });
+    return r.w / r.h;
+  }
+  return item.natural;
+}
 
 // ---- layout: balanced justified rows -----------------------------------
 // Split the photos, in order, into rows whose total aspect is as even as possible,
@@ -30,14 +61,11 @@ function layout() {
   if (!n) return;
 
   var mobile = window.innerWidth <= MOBILE_MAX;
-  var gap = 3;
+  var gap = mobile ? 4 : 8;
   var target = mobile ? 150 : 240;
   var width = photos.clientWidth;
 
-  var aspect = items.map(function (it) {
-    var r = RATIOS[it.ratioIndex];
-    return r.w / r.h;
-  });
+  var aspect = items.map(aspectOf);
   var prefix = [0];
   aspect.forEach(function (a, i) { prefix.push(prefix[i] + a); });
   var total = prefix[n];
@@ -97,28 +125,8 @@ window.addEventListener('resize', function () {
 
 // ---- one photo ---------------------------------------------------------
 
-function applyRatio(item) {
-  var r = RATIOS[item.ratioIndex];
-  item.labelName.textContent = r.name;
-  item.labelSize.textContent = r.w + ' × ' + r.h;
-  item.minus.disabled = item.ratioIndex === 0;
-  item.plus.disabled = item.ratioIndex === RATIOS.length - 1;
-}
-
-function step(item, delta) {
-  var next = item.ratioIndex + delta;
-  if (next < 0 || next >= RATIOS.length) return;
-  item.ratioIndex = next;
-  applyRatio(item);
-  layout();
-  saveLocal();
-}
-
-function makeButton(text, title) {
-  var btn = document.createElement('button');
-  btn.textContent = text;
-  btn.title = title;
-  return btn;
+function altText(entry) {
+  return captions[entry.image] || 'Memory of Pavithra, photo ' + entry.id;
 }
 
 function buildItem(entry) {
@@ -127,41 +135,23 @@ function buildItem(entry) {
   item.photoId = entry.id;
   item.file = entry.image;
   item.id = 'photo-' + entry.id;
-  var idx = RATIOS.findIndex(function (r) { return r.name === entry.ratio; });
-  item.ratioIndex = idx >= 0 ? idx : 0;
+  item.width = entry.width;
+  item.height = entry.height;
+  item.natural = entry.width / entry.height;
+  item.ratio = entry.ratio && entry.ratio !== 'original' ? entry.ratio : null;
 
   item.img = document.createElement('img');
   item.img.draggable = false;
   item.img.loading = 'lazy';
-  item.img.alt = entry.image;
-  item.img.src = IMAGE_DIR + entry.image;
-
-  var controls = document.createElement('div');
-  controls.className = 'controls';
-  item.label = document.createElement('span');
-  item.label.className = 'label';
-  item.labelName = document.createElement('b');
-  item.labelSize = document.createElement('i');
-  item.label.appendChild(item.labelName);
-  item.label.appendChild(item.labelSize);
-  item.minus = makeButton('−', 'Previous ratio');
-  item.plus = makeButton('+', 'Next ratio');
-  item.minus.addEventListener('click', function () { step(item, -1); });
-  item.plus.addEventListener('click', function () { step(item, 1); });
-
-  var handle = document.createElement('div');
-  handle.className = 'handle';
-  handle.title = 'Drag to move';
-  handle.textContent = '✥';
-
-  controls.appendChild(item.label);
-  controls.appendChild(item.minus);
-  controls.appendChild(item.plus);
-  controls.appendChild(handle);
+  item.img.width = entry.width;
+  item.img.height = entry.height;
+  item.img.alt = altText(entry);
+  item.img.src = THUMB_DIR + entry.image;
+  item.tabIndex = 0;
+  item.setAttribute('role', 'button');
+  item.setAttribute('aria-label', 'Open ' + item.img.alt);
 
   item.appendChild(item.img);
-  item.appendChild(controls);
-  applyRatio(item);
   return item;
 }
 
@@ -172,14 +162,18 @@ function showMessage(text) {
 }
 
 // ---- remember the arrangement in this browser ------------------------------
-// config/images.json is the starting point; your changes are kept in localStorage
-// so a refresh keeps them.
+// config/images.json is the starting point; changes made while browsing are kept
+// in localStorage so a refresh keeps them. Add ?edit to the address to get a
+// "Copy config" button in the viewer that exports them back into images.json.
 
-var STORAGE_KEY = 'photo-grid-order';
+var STORAGE_KEY = 'photo-grid-v2';
 
 function currentData() {
   return Array.prototype.map.call(photos.querySelectorAll('.item'), function (item, i) {
-    return { id: item.photoId, image: item.file, order: i + 1, ratio: RATIOS[item.ratioIndex].name };
+    return {
+      id: item.photoId, image: item.file, order: i + 1, ratio: item.ratio || 'original',
+      width: item.width, height: item.height
+    };
   });
 }
 
@@ -199,10 +193,16 @@ function mergeSaved(entries, saved) {
   var next = saved.length;
   return entries.map(function (e) {
     var s = byId[e.id];
-    return s ? { id: e.id, image: e.image, order: s.order, ratio: s.ratio } :
-      { id: e.id, image: e.image, order: ++next, ratio: e.ratio };
+    return s ? Object.assign({}, e, { order: s.order, ratio: s.ratio }) :
+      Object.assign({}, e, { order: ++next });
   });
 }
+
+// captions are optional: a missing or broken file just means no captions
+var captionsReady = fetch(CAPTIONS_URL)
+  .then(function (res) { return res.ok ? res.json() : {}; })
+  .then(function (data) { captions = data || {}; })
+  .catch(function () { captions = {}; });
 
 fetch(CONFIG_URL)
   .then(function (res) {
@@ -210,10 +210,14 @@ fetch(CONFIG_URL)
     return res.json();
   })
   .then(function (entries) {
+    return captionsReady.then(function () { return entries; });
+  })
+  .then(function (entries) {
     entries = mergeSaved(entries, loadLocal());
     entries.sort(function (a, b) { return a.order - b.order; });
     entries.forEach(function (entry) { photos.appendChild(buildItem(entry)); });
     layout();
+    showClosing(entries.length);
     requestAnimationFrame(function () {
       requestAnimationFrame(function () { photos.classList.add('ready'); });
     });
@@ -223,26 +227,8 @@ fetch(CONFIG_URL)
       '(GitHub Pages, or "npx serve" / "python -m http.server" locally), not by double-clicking the file.');
   });
 
-// ---- touch: tap a photo to show its controls ----------------------------
-
-function clearActive() {
-  var current = photos.querySelector('.item.active');
-  if (current) current.classList.remove('active');
-}
-
-var tapWasActive = false;
-
-document.addEventListener('pointerdown', function (e) {
-  if (e.pointerType === 'mouse') return;
-  var item = e.target.closest && e.target.closest('.item');
-  tapWasActive = !!(item && item.classList.contains('active'));
-  if (tapWasActive) return;
-  clearActive();
-  if (item) item.classList.add('active');
-});
-
 // ---- drag to move --------------------------------------------------------
-// Mouse: drag anywhere on a photo. Touch: tap the photo, then drag its handle.
+// Mouse only: drag a photo to move it.
 // Layout follows DOM order, so moving a photo = moving it in the DOM and re-laying out;
 // the other photos glide into the freed space.
 
@@ -252,9 +238,7 @@ photos.addEventListener('pointerdown', function (e) {
   justDragged = false;
   var item = e.target.closest('.item');
   if (!item || e.button > 0) return;
-  if (e.target.closest('button')) return;
-  var onHandle = !!e.target.closest('.handle');
-  if (e.pointerType !== 'mouse' && !onHandle) return;
+  if (e.pointerType !== 'mouse') return;
 
   var rect = item.getBoundingClientRect();
   drag = {
@@ -311,7 +295,7 @@ function edgeScroll() {
   if (drag.y < zone) speed = -Math.ceil((zone - drag.y) / 4);
   else if (drag.y > window.innerHeight - zone) speed = Math.ceil((drag.y - (window.innerHeight - zone)) / 4);
   if (speed) {
-    window.scrollBy(0, speed);
+    window.scrollBy({ top: speed, behavior: 'instant' }); // page has smooth scrolling on
     moveDrag();
   }
   requestAnimationFrame(edgeScroll);
@@ -336,52 +320,218 @@ function endDrag(e) {
 }
 
 // ---- click a photo to see it fully ---------------------------------------
-// Mouse: a click opens it. Touch: first tap shows the controls, a tap on the
-// already-active photo opens it.
+// A click or tap opens it. Keyboard: Enter on a focused photo.
 
 var justDragged = false;
 
-var lightbox = document.createElement('div');
-lightbox.id = 'lightbox';
-lightbox.hidden = true;
-var lightboxImg = document.createElement('img');
-var closeBtn = document.createElement('button');
-closeBtn.type = 'button';
-closeBtn.id = 'lightbox-close';
-closeBtn.title = 'Close';
-closeBtn.textContent = '×';
-lightbox.appendChild(lightboxImg);
-lightbox.appendChild(closeBtn);
-document.body.appendChild(lightbox);
+var lightbox = document.getElementById('lightbox');
+var lbStage = document.getElementById('lb-stage');
+var lbFrame = document.getElementById('lb-frame');
+var lbImg = document.getElementById('lb-img');
+var lbCaption = document.getElementById('lb-caption');
+var lbCount = document.getElementById('lb-count');
+var lbRatios = document.getElementById('lb-ratios');
+
+var viewer = { items: [], index: 0, token: 0 };
+var fullImages = {}; // file -> Image, only for the current photo and its neighbours
+
+function currentItem() {
+  return viewer.items[viewer.index];
+}
+
+function buildRatioButtons() {
+  [null].concat(VIEWER_RATIOS).forEach(function (name) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = name || 'Original';
+    btn.dataset.ratio = name || '';
+    btn.addEventListener('click', function () {
+      // picking a shape is the one place a photo's ratio is edited: it is saved and the gallery follows
+      currentItem().ratio = name;
+      markRatio();
+      fitFrame();
+      layout();
+      saveLocal();
+    });
+    lbRatios.appendChild(btn);
+  });
+}
+
+function markRatio() {
+  Array.prototype.forEach.call(lbRatios.children, function (btn) {
+    if (btn.dataset.ratio === undefined) return;
+    btn.setAttribute('aria-pressed', String(btn.dataset.ratio === (currentItem().ratio || '')));
+  });
+}
+
+// Size the frame to the chosen shape, as large as fits. The image fills it with
+// object-fit: cover, so a crop never stretches anything.
+function fitFrame() {
+  if (!lbImg.naturalWidth) return;
+  var a = aspectOf(currentItem());
+  var w = Math.min(lbStage.clientWidth, lbStage.clientHeight * a);
+  lbFrame.style.width = w + 'px';
+  lbFrame.style.height = (w / a) + 'px';
+  lbFrame.style.visibility = 'visible';
+}
+
+function onImgLoad() {
+  fitFrame();
+  lbFrame.classList.add('in');
+}
+
+function loadFull(file) {
+  var im = fullImages[file];
+  if (!im) {
+    im = fullImages[file] = new Image();
+    im.src = IMAGE_DIR + file;
+  }
+  return im;
+}
+
+function show(i) {
+  var n = viewer.items.length;
+  viewer.index = (i + n) % n;
+  var item = viewer.items[viewer.index];
+  var token = ++viewer.token;
+  markRatio();
+
+  // the gallery thumbnail is already cached, so something sharp-ish appears at once;
+  // the full-resolution file replaces it as soon as it has loaded
+  lbFrame.style.visibility = 'hidden';
+  lbFrame.classList.remove('in');
+  lbImg.alt = item.img.alt;
+  lbImg.onload = onImgLoad;
+  lbImg.src = THUMB_DIR + item.file;
+
+  var full = loadFull(item.file);
+  function swap() {
+    if (token !== viewer.token) return;
+    lbImg.src = full.src;
+  }
+  if (full.complete && full.naturalWidth) swap();
+  else full.addEventListener('load', swap, { once: true });
+
+  var caption = captions[item.file];
+  lbCaption.textContent = caption || '';
+  lbCaption.hidden = !caption;
+  lbCount.textContent = (viewer.index + 1) + ' of ' + n + ' memories';
+
+  // keep the neighbours warm; drop everything else so memory stays small
+  var keep = {};
+  [-1, 0, 1].forEach(function (d) {
+    var f = viewer.items[(viewer.index + d + n) % n].file;
+    keep[f] = true;
+    loadFull(f);
+  });
+  Object.keys(fullImages).forEach(function (f) { if (!keep[f]) delete fullImages[f]; });
+}
 
 function openLightbox(item) {
-  lightboxImg.src = IMAGE_DIR + item.file;
-  lightboxImg.alt = item.file;
+  viewer.items = Array.prototype.slice.call(photos.children);
   lightbox.hidden = false;
-  document.body.classList.add('no-scroll');
+  document.documentElement.classList.add('no-scroll');
+  document.addEventListener('keydown', onViewerKey);
+  window.addEventListener('resize', fitFrame);
+  show(viewer.items.indexOf(item));
+  document.getElementById('lb-close').focus();
 }
 
 function closeLightbox() {
+  var current = viewer.items[viewer.index];
+  viewer.token++;
   lightbox.hidden = true;
-  lightboxImg.removeAttribute('src');
-  document.body.classList.remove('no-scroll');
+  lbImg.onload = null;
+  lbImg.removeAttribute('src');
+  fullImages = {};
+  document.documentElement.classList.remove('no-scroll');
+  document.removeEventListener('keydown', onViewerKey);
+  window.removeEventListener('resize', fitFrame);
+  if (current) {
+    current.focus({ preventScroll: true });
+    current.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+  }
 }
 
-closeBtn.addEventListener('click', closeLightbox);
+function onViewerKey(e) {
+  if (e.key === 'Escape') closeLightbox();
+  else if (e.key === 'ArrowLeft') show(viewer.index - 1);
+  else if (e.key === 'ArrowRight') show(viewer.index + 1);
+  else if (e.key === 'Tab') {
+    // keep Tab inside the viewer while it is open
+    var focusable = lightbox.querySelectorAll('button');
+    var first = focusable[0], last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
+    else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+  }
+}
+
+document.getElementById('lb-close').addEventListener('click', closeLightbox);
+document.getElementById('lb-prev').addEventListener('click', function () { show(viewer.index - 1); });
+document.getElementById('lb-next').addEventListener('click', function () { show(viewer.index + 1); });
 lightbox.addEventListener('click', function (e) {
-  if (e.target === lightbox) closeLightbox();
+  if (e.target === lightbox || e.target === lbStage) closeLightbox();
 });
-document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape' && !lightbox.hidden) closeLightbox();
-});
+
+// swipe left/right on touch screens
+var swipe = null;
+lightbox.addEventListener('touchstart', function (e) {
+  var t = e.touches[0];
+  swipe = e.touches.length === 1 && !e.target.closest('.lb-ratios') ? { x: t.clientX, y: t.clientY } : null;
+}, { passive: true });
+lightbox.addEventListener('touchend', function (e) {
+  if (!swipe) return;
+  var t = e.changedTouches[0];
+  var dx = t.clientX - swipe.x, dy = t.clientY - swipe.y;
+  swipe = null;
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) show(viewer.index + (dx < 0 ? 1 : -1));
+}, { passive: true });
+
+buildRatioButtons();
+
+// ?edit: a button that copies the current arrangement, ready to paste into config/images.json
+if (/[?&]edit\b/.test(location.search)) {
+  var copyBtn = document.createElement('button');
+  copyBtn.type = 'button';
+  copyBtn.textContent = 'Copy config';
+  copyBtn.addEventListener('click', function () {
+    navigator.clipboard.writeText(JSON.stringify(currentData(), null, 4)).then(function () {
+      copyBtn.textContent = 'Copied!';
+      setTimeout(function () { copyBtn.textContent = 'Copy config'; }, 1500);
+    });
+  });
+  lbRatios.appendChild(copyBtn);
+}
 
 photos.addEventListener('click', function (e) {
   var item = e.target.closest('.item');
-  if (!item || e.target.closest('.controls')) return;
+  if (!item) return;
   if (justDragged) { justDragged = false; return; }
-  if (e.pointerType && e.pointerType !== 'mouse' && !tapWasActive) return;
   openLightbox(item);
 });
+
+photos.addEventListener('keydown', function (e) {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('item')) {
+    e.preventDefault();
+    openLightbox(e.target);
+  }
+});
+
+// ---- closing message: fades in once, when it scrolls into view -----------------
+
+function showClosing(count) {
+  var closing = document.getElementById('closing');
+  document.getElementById('total-count').textContent = count;
+  document.getElementById('total-count-2').textContent = count;
+  document.getElementById('gallery-count').textContent = count;
+  closing.hidden = false;
+  if (!('IntersectionObserver' in window)) { closing.classList.add('in'); return; }
+  var io = new IntersectionObserver(function (entries) {
+    if (entries[0].isIntersecting) { closing.classList.add('in'); io.disconnect(); }
+  }, { threshold: 0.25 });
+  io.observe(closing);
+}
+
 
 photos.addEventListener('pointerup', endDrag);
 photos.addEventListener('pointercancel', endDrag);
