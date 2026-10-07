@@ -9,8 +9,8 @@
   --glass: rgba(255, 255, 255, 0.06);
   --glass-edge: rgba(255, 255, 255, 0.13);
   --blur: 20px;
-  --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Times New Roman', serif;
-  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --serif: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
+  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --pad: 20px;
 }
 
@@ -104,7 +104,7 @@ body {
 
 .hero h1 {
   margin: 0;
-  font: 400 clamp(22px, 5.4vw, 34px)/1.2 var(--serif);
+  font: 500 clamp(26px, 6vw, 40px)/1.2 var(--serif);
   letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--ink);
@@ -160,7 +160,7 @@ body {
 
 .gallery-intro h2 {
   margin: 0;
-  font: 400 clamp(22px, 5vw, 28px)/1.2 var(--serif);
+  font: 500 clamp(24px, 5.4vw, 32px)/1.2 var(--serif);
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--ink);
@@ -168,7 +168,8 @@ body {
 
 .gallery-intro p {
   margin: 10px 0 0;
-  font: italic 400 17px/1.3 var(--serif);
+  font: 300 15px/1.5 var(--sans);
+  letter-spacing: 0.06em;
   color: var(--soft);
 }
 
@@ -383,7 +384,8 @@ body {
 .lb-caption {
   margin: 0;
   max-width: 34em;
-  font: italic 400 16px/1.4 var(--serif);
+  font: 300 15px/1.6 var(--sans);
+  letter-spacing: 0.03em;
   color: #e6ddd3;
 }
 
@@ -516,7 +518,7 @@ body {
 }
 
 .closing-big {
-  font: 400 clamp(26px, 6vw, 38px)/1.25 var(--serif);
+  font: 500 clamp(30px, 7vw, 44px)/1.25 var(--serif);
   color: var(--ink);
 }
 
@@ -543,13 +545,14 @@ body {
 
 .closing-wish {
   margin-top: 20px !important;
-  font: 400 clamp(21px, 5vw, 27px)/1.4 var(--serif);
+  font: 500 clamp(24px, 5.6vw, 32px)/1.4 var(--serif);
   color: var(--ink);
 }
 
 .closing-sign {
   margin-top: 14px !important;
-  font: italic 400 18px/1.4 var(--serif);
+  font: 500 22px/1.4 var(--serif);
+  letter-spacing: 0.04em;
   color: var(--soft);
 }
 
@@ -559,7 +562,7 @@ body {
   border-radius: 12px;
   background: #fff;
   color: #a4444f;
-  font: 14px sans-serif;
+  font: 400 14px/1.5 var(--sans);
 }
 
 /* ---- opening loader: a small emblem over a soft, blurred copy of its own photo ---- */
@@ -634,7 +637,7 @@ body {
 
 .birthday-loader-text {
   fill: #3a2f2c;
-  font: 400 30px var(--serif);
+  font: 500 30px var(--serif);
   letter-spacing: 0.02em;
 }
 
@@ -692,7 +695,7 @@ html.locked .birthday-loader {
 
 .gate h1 {
   margin: 0;
-  font: 400 clamp(19px, 5.2vw, 28px)/1.3 var(--serif);
+  font: 500 clamp(22px, 5.6vw, 32px)/1.3 var(--serif);
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: #fff;
@@ -855,8 +858,8 @@ html.locked .birthday-loader {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: min(34px, 32%); /* never more than a third of a (narrow) tile */
+  aspect-ratio: 1;
   padding: 0 0 1px;
   border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 50%;
@@ -998,8 +1001,7 @@ html.locked .birthday-loader {
   .fav {
     top: 6px;
     right: 6px;
-    width: 30px;
-    height: 30px;
+    width: min(30px, 32%);
     font-size: 16px;
   }
 
@@ -1072,4 +1074,206 @@ html.locked .birthday-loader {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ================= Glass controls: one shared look for every button =================
+   Translucent fill, light blur, hairline edge, soft shadow. Only controls are glass. */
+:root {
+  --g-fill: linear-gradient(145deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05));
+  --g-fill-hover: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.08));
+  --g-fill-on: linear-gradient(145deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.13));
+  --g-edge: rgba(255, 255, 255, 0.22);
+  --g-edge-on: rgba(255, 255, 255, 0.5);
+  --g-shadow: 0 4px 18px rgba(5, 8, 30, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  --g-glow: 0 0 18px rgba(190, 200, 255, 0.14);
+  --g-ease: 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.hero-btn,
+.gate-btn,
+.filter-btn,
+.lb-btn,
+.fav,
+.lb-ratios button,
+.lb-bar .lb-nav,
+.gate-toggle,
+.edit-bar button {
+  background: var(--g-fill);
+  border: 1px solid var(--g-edge);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: var(--g-shadow), var(--g-glow);
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 2px rgba(5, 8, 30, 0.35);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: background var(--g-ease), border-color var(--g-ease), box-shadow var(--g-ease),
+    color var(--g-ease), transform 0.18s ease, opacity var(--g-ease);
+}
+
+/* the crop group and prev/next bar are just holders now: the buttons inside carry the glass */
+.lb-ratios.glass,
+.lb-bar.glass {
+  background: none;
+  border-color: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+.lb-ratios { gap: 6px; padding: 6px 4px 8px; }
+.lb-bar { gap: 10px; }
+.lb-bar .lb-nav { width: 46px; height: 46px; border-radius: 50%; }
+.lb-ratios button { min-height: 38px; padding: 0 16px; }
+.filter-btn { min-height: 40px; padding: 0 20px; color: rgba(255, 255, 255, 0.82); }
+.gate-toggle { height: 34px; box-shadow: none; }
+.fav { background: linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(12, 10, 34, 0.3)); }
+
+@media (hover: hover) {
+  .hero-btn:hover,
+  .gate-btn:hover:not(:disabled),
+  .filter-btn:hover,
+  .lb-btn:hover,
+  .fav:hover,
+  .lb-ratios button:hover,
+  .lb-bar .lb-nav:hover,
+  .gate-toggle:hover,
+  .edit-bar button:hover {
+    background: var(--g-fill-hover);
+    border-color: rgba(255, 255, 255, 0.38);
+    box-shadow: 0 6px 22px rgba(5, 8, 30, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 0 22px rgba(190, 200, 255, 0.22);
+    color: #fff;
+  }
+
+  .hero-btn:hover,
+  .gate-btn:hover:not(:disabled),
+  .filter-btn:hover,
+  .lb-ratios button:hover { transform: translateY(-1px); }
+}
+
+/* press / tap */
+.hero-btn:active,
+.gate-btn:active:not(:disabled),
+.filter-btn:active,
+.lb-btn:active,
+.lb-ratios button:active,
+.lb-bar .lb-nav:active,
+.gate-toggle:active,
+.edit-bar button:active { transform: scale(0.95); }
+.fav:active { transform: scale(0.9); }
+
+/* selected: a stronger, brighter glass */
+.filter-btn[aria-pressed="true"],
+.lb-ratios button[aria-pressed="true"] {
+  background: var(--g-fill-on);
+  border-color: var(--g-edge-on);
+  box-shadow: 0 6px 22px rgba(5, 8, 30, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.32), 0 0 24px rgba(200, 210, 255, 0.26);
+  color: #fff;
+}
+
+.fav.on,
+.lb-fav.on {
+  background: linear-gradient(145deg, rgba(255, 150, 170, 0.3), rgba(255, 255, 255, 0.08));
+  border-color: rgba(255, 170, 185, 0.6);
+  box-shadow: var(--g-shadow), 0 0 18px rgba(240, 138, 155, 0.35);
+  color: #ff9db0;
+}
+
+.hero-btn, .gate-btn { padding: 15px 30px; }
+.hero-btn { display: inline-block; }
+.lb-btn { width: 46px; height: 46px; }
+
+@media (max-width: 700px) {
+  .filter-btn { min-height: 44px; }
+  .lb-ratios button { min-height: 42px; }
+  .lb-bar .lb-nav { width: 50px; height: 50px; }
+  .fav { -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); } /* 100 tiles: keep it light */
+}
+
+/* ---- typography: Inter for everything functional, Cormorant Garamond only for the romantic headings ---- */
+body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+button, input { font-family: var(--sans); }
+.hero h1, .gallery-intro h2, .gate h1 { font-weight: 500; letter-spacing: 0.2em; }
+.hero p { font-weight: 300; letter-spacing: 0.06em; }
+.gallery-count, .filter-btn, .hero-btn, .gate-btn, .lb-count { font-family: var(--sans); font-weight: 500; }
+
+/* ---- a few small star clusters (three four-point stars each), behind everything ---- */
+.sky-cluster {
+  position: absolute;
+  width: 0;
+  height: 0;
+  filter: drop-shadow(0 0 3px rgba(190, 205, 255, 0.7));
+  animation: cluster 9s ease-in-out infinite alternate;
+}
+
+.sky-cluster i {
+  position: absolute;
+  display: block;
+  background: radial-gradient(circle, #fff 0%, #e4e9ff 35%, #aab6f5 100%);
+  clip-path: polygon(50% 0, 58% 42%, 100% 50%, 58% 58%, 50% 100%, 42% 58%, 0 50%, 42% 42%);
+  opacity: 0.8;
+  animation: cluster 5s ease-in-out infinite alternate;
+}
+
+@keyframes cluster {
+  from { opacity: 0.4; }
+  to { opacity: 0.85; }
+}
+/* ================= Mobile pass: safe areas, no sideways scroll, small and landscape screens ================= */
+html, body { overflow-x: clip; max-width: 100%; }
+img { max-width: 100%; }
+.sky-cluster { pointer-events: none; }
+
+/* notches and rounded corners */
+.lb-close { top: calc(12px + env(safe-area-inset-top)); right: calc(12px + env(safe-area-inset-right)); }
+.lb-fav { top: calc(12px + env(safe-area-inset-top)); left: calc(12px + env(safe-area-inset-left)); }
+.lb-stage { margin-left: calc(var(--side) + env(safe-area-inset-left)); margin-right: calc(var(--side) + env(safe-area-inset-right)); margin-top: calc(64px + env(safe-area-inset-top)); }
+.gallery { padding-left: max(var(--pad), env(safe-area-inset-left)); padding-right: max(var(--pad), env(safe-area-inset-right)); }
+html.locked .gate { padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left)); }
+.edit-bar { left: max(12px, env(safe-area-inset-left)); bottom: max(12px, env(safe-area-inset-bottom)); }
+.birthday-loader-stage { --stage: min(72vw, 72svh, 290px); }
+.birthday-loader { --stage: min(72vw, 72svh, 290px); }
+
+@media (min-width: 701px) {
+  .lb-stage { margin-top: calc(72px + env(safe-area-inset-top)); }
+}
+
+/* the filter pair always stays on one line unless there truly is no room */
+.gallery-filter { gap: 8px; padding: 0 4px; }
+.filter-btn { white-space: nowrap; }
+
+/* small phones (320-380px) */
+@media (max-width: 380px) {
+  .hero h1, .gallery-intro h2, .gate h1 { letter-spacing: 0.14em; }
+  .filter-btn { padding: 0 14px; font-size: 10.5px; letter-spacing: 0.08em; }
+  .hero-btn, .gate-btn { padding: 14px 24px; }
+  .lb-ratios button { padding: 0 13px; }
+  .lb-count { min-width: 8.5em; letter-spacing: 0.06em; }
+  .lb-bar { gap: 6px; }
+  .lb-caption { font-size: 14px; }
+  .closing { padding: 100px 20px 120px; }
+  .sky-cluster:nth-of-type(n+6) { display: none; } /* fewer decorations on tiny screens */
+}
+
+/* tall phones and tablets in portrait: nothing needs to change, but keep the closing text from running wide */
+.closing-text, .closing-big, .closing-wish { overflow-wrap: break-word; }
+
+/* phone on its side: short screens */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero { min-height: 0; }
+  .hero h1 { font-size: clamp(22px, 5vw, 30px); }
+  .lb-stage { margin-top: calc(10px + env(safe-area-inset-top)); }
+  .lb-btn { width: 42px; height: 42px; }
+  .lb-bar .lb-nav { width: 42px; height: 42px; }
+  .lb-ratios { padding-bottom: 6px; }
+  .lb-ratios button { min-height: 36px; }
+  .closing { padding: 70px 24px 80px; }
+  html.locked .gate { align-items: flex-start; }
+  .gate-field { margin-top: 20px; }
+  .gate-heart { margin-bottom: 10px; }
+  .sky-cluster:nth-of-type(n+5) { display: none; }
+}
+
+@media (max-width: 700px) {
+  .lb-bottom { padding-left: max(12px, env(safe-area-inset-left)); padding-right: max(12px, env(safe-area-inset-right)); }
 }

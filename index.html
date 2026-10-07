@@ -2,7 +2,7 @@
 <html lang="en" class="no-scroll">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#101733">
   <script>
     // Decide before anything paints: a visitor who already unlocked in this browser session skips the gate.
@@ -12,12 +12,24 @@
   <title>For You, Pavithra</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext x='16' y='25' font-size='24' text-anchor='middle' fill='%23b5656b'%3E%E2%99%A5%3C/text%3E%3C/svg%3E">
   <link rel="preload" as="image" href="images/thumbs/Loader.jpg">
-  <link rel="stylesheet" href="css/style.css?v=20261007b">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="css/style.css?v=20261007l">
   <noscript><style>.birthday-loader { display: none; } html.no-scroll { overflow: auto; }</style></noscript>
 </head>
 <body>
 
-<div class="sky" aria-hidden="true"><canvas></canvas></div>
+<div class="sky" aria-hidden="true"><canvas></canvas>
+  <span class="sky-cluster" style="left:8%;top:9%;animation-delay:-0s"><i style="left:0px;top:6px;width:12px;height:12px;animation-delay:-0s"></i><i style="left:15px;top:0px;width:8px;height:8px;animation-delay:-3s"></i><i style="left:24px;top:14px;width:6px;height:6px;animation-delay:-6s"></i></span>
+  <span class="sky-cluster" style="left:87%;top:6%;animation-delay:-3s"><i style="left:2px;top:0px;width:9px;height:9px;animation-delay:-3s"></i><i style="left:14px;top:10px;width:13px;height:13px;animation-delay:-6s"></i><i style="left:4px;top:22px;width:6px;height:6px;animation-delay:-9s"></i></span>
+  <span class="sky-cluster" style="left:93%;top:26%;animation-delay:-5s"><i style="left:0px;top:10px;width:7px;height:7px;animation-delay:-5s"></i><i style="left:11px;top:0px;width:11px;height:11px;animation-delay:-8s"></i><i style="left:20px;top:16px;width:6px;height:6px;animation-delay:-11s"></i></span>
+  <span class="sky-cluster" style="left:3%;top:43%;animation-delay:-2s"><i style="left:8px;top:0px;width:10px;height:10px;animation-delay:-2s"></i><i style="left:0px;top:14px;width:6px;height:6px;animation-delay:-5s"></i><i style="left:17px;top:17px;width:8px;height:8px;animation-delay:-8s"></i></span>
+  <span class="sky-cluster" style="left:82%;top:61%;animation-delay:-6s"><i style="left:0px;top:4px;width:8px;height:8px;animation-delay:-6s"></i><i style="left:10px;top:12px;width:12px;height:12px;animation-delay:-9s"></i><i style="left:22px;top:2px;width:6px;height:6px;animation-delay:-12s"></i></span>
+  <span class="sky-cluster" style="left:5%;top:74%;animation-delay:-4s"><i style="left:10px;top:6px;width:13px;height:13px;animation-delay:-4s"></i><i style="left:0px;top:0px;width:7px;height:7px;animation-delay:-7s"></i><i style="left:20px;top:20px;width:6px;height:6px;animation-delay:-10s"></i></span>
+  <span class="sky-cluster" style="left:91%;top:85%;animation-delay:-1s"><i style="left:6px;top:10px;width:9px;height:9px;animation-delay:-1s"></i><i style="left:18px;top:0px;width:6px;height:6px;animation-delay:-4s"></i><i style="left:14px;top:18px;width:11px;height:11px;animation-delay:-7s"></i></span>
+  <span class="sky-cluster" style="left:44%;top:96%;animation-delay:-7s"><i style="left:0px;top:2px;width:8px;height:8px;animation-delay:-7s"></i><i style="left:12px;top:6px;width:11px;height:11px;animation-delay:-10s"></i><i style="left:24px;top:0px;width:6px;height:6px;animation-delay:-13s"></i></span>
+</div>
 
 <div class="gate" id="gate">
   <form class="gate-form" id="gate-form" novalidate>
@@ -48,7 +60,7 @@
   </div>
 </div>
 <header class="hero">
-  <span class="heart" aria-hidden="true">♥</span>
+  <span class="heart" aria-hidden="true">&#9829;</span>
   <h1>For you, Pavithra</h1>
   <p>A little collection of memories of you.</p>
   <a class="hero-btn" href="#gallery">View Memories</a>
@@ -56,7 +68,7 @@
 
 <main id="gallery" class="gallery">
   <div class="gallery-intro">
-    <h2>Memories <span class="heart" aria-hidden="true">♥</span></h2>
+    <h2>Memories <span class="heart" aria-hidden="true">&#9829;</span></h2>
     <p>A hundred little moments</p>
     <span class="gallery-count"><span id="gallery-count">100</span> memories</span>
     <div class="gallery-filter" role="group" aria-label="Show memories">
@@ -73,7 +85,7 @@
   <p class="closing-big">That's <span id="total-count">100</span> memories.</p>
   <p class="closing-soft">But honestly&hellip;</p>
   <p class="closing-text">These are only <span id="total-count-2">100</span> moments out of countless reasons why you mean so much to me.</p>
-  <p class="closing-heart heart" aria-hidden="true">♥</p>
+  <p class="closing-heart heart" aria-hidden="true">&#9829;</p>
   <p class="closing-wish">Happy 20th Birthday, Pavithra.</p>
   <p class="closing-sign">&mdash; Govind</p>
 </section>
@@ -96,8 +108,8 @@
   </div>
 </div>
 
-<script src="js/sky.js?v=20261007b"></script>
-<script src="js/gate.js?v=20261007b"></script>
-<script src="js/script.js?v=20261007b"></script>
+<script src="js/sky.js?v=20261007l"></script>
+<script src="js/gate.js?v=20261007l"></script>
+<script src="js/script.js?v=20261007l"></script>
 </body>
 </html>

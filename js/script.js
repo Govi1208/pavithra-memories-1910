@@ -36,7 +36,7 @@ var RATIOS = [
 
 // Order, ratio and image of every photo live in config/images.json
 // bump this whenever config or images change, so phones don't keep an old cached copy
-var VERSION = '20261007b';
+var VERSION = '20261007g';
 var CONFIG_URL = 'config/images.json?v=' + VERSION;
 // Optional captions live in config/captions.json as { "image012.jpg": "text" }
 var CAPTIONS_URL = 'config/captions.json?v=' + VERSION;
@@ -154,19 +154,36 @@ function buildItem(entry) {
   item.className = 'item';
   item.photoId = entry.id;
   item.file = entry.image;
+  item.v = entry.v || ''; // fingerprint of the picture (made by sync-photos.ps1)
+  // "?v=" makes a replaced picture a new address, so no browser or CDN can serve an old copy of it
+  item.thumbSrc = THUMB_DIR + entry.image + (item.v ? '?v=' + item.v : '');
+  item.fullSrc = IMAGE_DIR + entry.image + (item.v ? '?v=' + item.v : '');
   item.id = 'photo-' + entry.id;
-  item.width = entry.width;
-  item.height = entry.height;
-  item.natural = entry.width / entry.height;
+  // width/height in images.json let the layout be right before the picture arrives. A photo that
+  // was added without them still works: it starts square and corrects itself when it loads.
+  var sized = entry.width > 0 && entry.height > 0;
+  item.width = sized ? entry.width : 0;
+  item.height = sized ? entry.height : 0;
+  item.natural = sized ? entry.width / entry.height : 1;
   item.ratio = entry.ratio && entry.ratio !== 'original' ? entry.ratio : null;
 
   item.img = document.createElement('img');
   item.img.draggable = false;
   item.img.loading = 'lazy';
-  item.img.width = entry.width;
-  item.img.height = entry.height;
+  if (sized) { item.img.width = entry.width; item.img.height = entry.height; }
   item.img.alt = altText(entry);
-  item.img.src = THUMB_DIR + entry.image;
+  item.img.addEventListener('load', function () {
+    if (item.width > 0 || !item.img.naturalWidth) return;
+    item.width = item.img.naturalWidth;
+    item.height = item.img.naturalHeight;
+    item.natural = item.width / item.height;
+    layout();
+  });
+  // no thumbnail for this photo (e.g. just added to images/): use the full-size file instead
+  item.img.addEventListener('error', function () {
+    if (item.img.src.indexOf(THUMB_DIR) !== -1) item.img.src = item.fullSrc;
+  });
+  item.img.src = item.thumbSrc;
   item.tabIndex = 0;
   item.setAttribute('role', 'button');
   item.setAttribute('aria-label', 'Open ' + item.img.alt);
@@ -290,7 +307,7 @@ function currentData() {
   return Array.prototype.map.call(photos.querySelectorAll('.item'), function (item, i) {
     return {
       id: item.photoId, image: item.file, order: i + 1, ratio: item.ratio || 'original',
-      width: item.width, height: item.height, favorite: item.favorite
+      width: item.width, height: item.height, favorite: item.favorite, v: item.v
     };
   });
 }
@@ -302,13 +319,16 @@ function saveLocal() {
 }
 
 // With `node serve.js` running, edit mode also writes config/images.json itself, a moment after
-// each change. On any other host (GitHub Pages, Live Server...) that endpoint does not exist, so
+// each change. On any other host (GitHub Pages, Live Server...) there is nothing to save to, so
 // the Copy / Download buttons are the way to save.
 var fileSaveTimer, editStatus = null;
 
 function setEditStatus(text) { if (editStatus) editStatus.textContent = text; }
 
+var autoSave = false; // switched on only when the server says it can save (serve.js sends X-Config-Save)
+
 function scheduleFileSave() {
+  if (!autoSave) { setEditStatus('Auto-save off: use Copy or Download'); return; }
   clearTimeout(fileSaveTimer);
   fileSaveTimer = setTimeout(function () {
     fetch('__save-config', {
@@ -316,8 +336,10 @@ function scheduleFileSave() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(currentData())
     }).then(function (res) {
+      if (!res.ok) autoSave = false; // this server cannot save: stop asking
       setEditStatus(res.ok ? 'Saved to images.json ✓' : 'Auto-save off: use Copy or Download');
     }, function () {
+      autoSave = false;
       setEditStatus('Auto-save off: use Copy or Download');
     });
   }, 400);
@@ -331,28 +353,30 @@ function loadLocal() {
   } catch (e) { return null; }
 }
 
-// apply saved order/ratio on top of the config; photos missing from the save go last
+// Edit mode only: bring back the ratios picked while working. The ORDER is never taken from
+// here (or from any `order` number): photos appear exactly in the order of config/images.json.
 function mergeSaved(entries, saved) {
   if (!Array.isArray(saved)) return entries;
   var byId = {};
   saved.forEach(function (s) { byId[s.id] = s; });
-  var next = saved.length;
   return entries.map(function (e) {
     var s = byId[e.id];
-    return s ? Object.assign({}, e, { order: s.order, ratio: s.ratio }) :
-      Object.assign({}, e, { order: ++next });
+    return s ? Object.assign({}, e, { ratio: s.ratio }) : e;
   });
 }
 
 // captions are optional: a missing or broken file just means no captions
-var captionsReady = fetch(CAPTIONS_URL)
+var captionsReady = fetch(CAPTIONS_URL, { cache: 'no-cache' })
   .then(function (res) { return res.ok ? res.json() : {}; })
   .then(function (data) { captions = data || {}; })
   .catch(function () { captions = {}; });
 
-fetch(CONFIG_URL)
+// 'no-cache' = ask the server every time whether images.json changed (a quick 304 when it has not),
+// so a photo added to the file shows up on the next ordinary refresh, never from a stale copy
+fetch(CONFIG_URL, { cache: 'no-cache' })
   .then(function (res) {
     if (!res.ok) throw new Error('HTTP ' + res.status);
+    autoSave = EDIT && res.headers.get('X-Config-Save') === '1';
     return res.json();
   })
   .then(function (entries) {
@@ -375,7 +399,7 @@ fetch(CONFIG_URL)
       if (!entry || userFavorites[id] === entry.defaultFavorite) { delete userFavorites[id]; pruned = true; }
     });
     if (pruned) saveFavorites();
-    entries.sort(function (a, b) { return a.order - b.order; });
+    // no sorting and no shuffling: the file's own order is the gallery's order
     entries.forEach(function (entry) { photos.appendChild(buildItem(entry)); });
     applyFilter(); // lays out, and respects a filter picked while the photos were still loading
     document.getElementById('fav-count').textContent = favoriteCount();
@@ -551,11 +575,11 @@ function syncViewerHeart() {
   lbFav.setAttribute('aria-label', on ? 'Remove from favorites' : 'Add to favorites');
 }
 
-function loadFull(file) {
-  var im = fullImages[file];
+function loadFull(item) {
+  var im = fullImages[item.file];
   if (!im) {
-    im = fullImages[file] = new Image();
-    im.src = IMAGE_DIR + file;
+    im = fullImages[item.file] = new Image();
+    im.src = item.fullSrc;
   }
   return im;
 }
@@ -574,9 +598,9 @@ function show(i) {
   lbFrame.classList.remove('in');
   lbImg.alt = item.img.alt;
   lbImg.onload = onImgLoad;
-  lbImg.src = THUMB_DIR + item.file;
+  lbImg.src = item.thumbSrc;
 
-  var full = loadFull(item.file);
+  var full = loadFull(item);
   function swap() {
     if (token !== viewer.token) return;
     lbImg.src = full.src;
@@ -592,9 +616,9 @@ function show(i) {
   // keep the neighbours warm; drop everything else so memory stays small
   var keep = {};
   [-1, 0, 1].forEach(function (d) {
-    var f = viewer.items[(viewer.index + d + n) % n].file;
-    keep[f] = true;
-    loadFull(f);
+    var near = viewer.items[(viewer.index + d + n) % n];
+    keep[near.file] = true;
+    loadFull(near);
   });
   Object.keys(fullImages).forEach(function (f) { if (!keep[f]) delete fullImages[f]; });
 }

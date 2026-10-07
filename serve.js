@@ -45,6 +45,26 @@ function saveConfig(req, res) {
   });
 }
 
+// a heads-up when the gallery and the pictures in images/ are out of step
+(function () {
+  try {
+    const crypto = require('crypto');
+    const list = JSON.parse(fs.readFileSync(CONFIG, 'utf8').replace(/^\uFEFF/, ''));
+    const listed = new Set(list.map(function (e) { return e.image; }));
+    const unlisted = fs.readdirSync(path.join(ROOT, 'images')).filter(function (f) {
+      return /\.(jpe?g|png)$/i.test(f) && f !== 'Loader.jpg' && !listed.has(f);
+    });
+    const stale = list.filter(function (e) {
+      const file = path.join(ROOT, 'images', e.image), thumb = path.join(ROOT, 'images', 'thumbs', e.image);
+      if (!fs.existsSync(file)) return false;
+      if (!fs.existsSync(thumb)) return true;
+      return e.v !== crypto.createHash('sha1').update(fs.readFileSync(file)).digest('hex').slice(0, 10);
+    }).map(function (e) { return e.image; });
+    if (unlisted.length) console.log('\nNOTE: ' + unlisted.length + ' picture(s) in images/ are not in config/images.json, so they will not show:\n  ' + unlisted.join(', '));
+    if (stale.length) console.log('\nNOTE: ' + stale.length + ' picture(s) changed (or have no thumbnail), so their gallery thumbnails are out of date:\n  ' + stale.join(', '));
+    if (unlisted.length || stale.length) console.log('  Run sync-photos.ps1 to fix both (it remakes the thumbnails and updates config/images.json).\n');
+  } catch (e) { /* only a convenience */ }
+})();
 http.createServer(function (req, res) {
   const url = decodeURIComponent(req.url.split('?')[0]);
   if (req.method === 'POST' && url === '/__save-config') { saveConfig(req, res); return; }
@@ -54,7 +74,7 @@ http.createServer(function (req, res) {
   if (file !== ROOT && !file.startsWith(ROOT + path.sep)) { res.writeHead(403); res.end(); return; }
   fs.readFile(file, function (err, data) {
     if (err) { res.writeHead(404); res.end('not found'); return; }
-    res.writeHead(200, { 'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-store' });
+    res.writeHead(200, { 'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-store', 'X-Config-Save': '1' }); // tells the page that saving works
     res.end(req.method === 'HEAD' ? undefined : data);
   });
 }).listen(PORT, '127.0.0.1', function () {
