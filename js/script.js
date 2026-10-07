@@ -77,7 +77,7 @@ function layout() {
   if (!n) { photos.style.height = '0px'; return; }
 
   var mobile = window.innerWidth <= MOBILE_MAX;
-  var gap = mobile ? 4 : 8;
+  var gap = mobile ? 7 : 12;
   var target = mobile ? 150 : 240;
   var width = photos.clientWidth;
 
@@ -226,7 +226,7 @@ function favoriteCount() {
 }
 
 function updateHeart(item) {
-  item.favButton.textContent = item.favorite ? '♥' : '♡'; // ♥ / ♡
+  item.favButton.textContent = item.favorite ? '❤️' : '♡'; // ❤️ / ♡
   item.favButton.classList.toggle('on', item.favorite);
   item.favButton.setAttribute('aria-pressed', String(item.favorite));
   item.favButton.setAttribute('aria-label', item.favorite ? 'Remove from favorites' : 'Add to favorites');
@@ -569,7 +569,7 @@ function onImgLoad() {
 
 function syncViewerHeart() {
   var on = currentItem().favorite;
-  lbFav.textContent = on ? '♥' : '♡';
+  lbFav.textContent = on ? '❤️' : '♡';
   lbFav.classList.toggle('on', on);
   lbFav.setAttribute('aria-pressed', String(on));
   lbFav.setAttribute('aria-label', on ? 'Remove from favorites' : 'Add to favorites');
@@ -747,12 +747,17 @@ function showClosing(count) {
   document.getElementById('total-count').textContent = count;
   document.getElementById('total-count-2').textContent = count;
   document.getElementById('gallery-count').textContent = count;
+  var complete = document.getElementById('complete');
+  document.getElementById('complete-count').textContent = count;
+  document.getElementById('complete-total').textContent = count;
   closing.hidden = false;
-  if (!('IntersectionObserver' in window)) { closing.classList.add('in'); return; }
+  complete.hidden = false;
+  var targets = [closing, complete];
+  if (!('IntersectionObserver' in window)) { targets.forEach(function (n) { n.classList.add('in'); }); return; }
   var io = new IntersectionObserver(function (entries) {
-    if (entries[0].isIntersecting) { closing.classList.add('in'); io.disconnect(); }
+    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
   }, { threshold: 0.25 });
-  io.observe(closing);
+  targets.forEach(function (n) { io.observe(n); });
 }
 
 

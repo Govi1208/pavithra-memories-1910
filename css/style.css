@@ -1277,3 +1277,75 @@ html.locked .gate { padding: max(24px, env(safe-area-inset-top)) max(24px, env(s
 @media (max-width: 700px) {
   .lb-bottom { padding-left: max(12px, env(safe-area-inset-left)); padding-right: max(12px, env(safe-area-inset-right)); }
 }
+
+/* ================= Final polish ================= */
+
+/* hero: clearer hierarchy, a more noticeable button */
+.hero h1 { letter-spacing: 0.22em; }
+.hero .heart { margin-bottom: 26px; }
+.hero p { margin-top: 22px; color: rgba(255, 255, 255, 0.7); }
+.hero-btn {
+  margin-top: 42px;
+  padding: 16px 36px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.1));
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 6px 24px rgba(5, 8, 30, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 0 26px rgba(190, 200, 255, 0.2);
+}
+
+/* favorite hearts on photos: a little bigger, clearer when on */
+.fav { top: 10px; right: 10px; width: min(40px, 34%); font-size: 20px; padding: 0 0 2px; }
+.fav.on {
+  background: linear-gradient(145deg, rgba(255, 130, 155, 0.34), rgba(255, 255, 255, 0.1));
+  border-color: rgba(255, 170, 185, 0.7);
+  box-shadow: 0 4px 16px rgba(5, 8, 30, 0.3), 0 0 16px rgba(240, 120, 145, 0.45);
+}
+.lb-fav { font-size: 22px; }
+@media (max-width: 700px) {
+  .fav { top: 7px; right: 7px; width: min(36px, 34%); font-size: 18px; }
+}
+
+/* 100 / 100: a quiet moment before the message */
+.complete {
+  margin: 56px auto 0;
+  text-align: center;
+  font: 400 13px/1 var(--sans);
+  letter-spacing: 0.34em;
+  color: rgba(255, 255, 255, 0.72);
+  text-shadow: 0 0 14px rgba(190, 200, 255, 0.55);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 1.2s ease, transform 1.2s ease;
+}
+.complete[hidden] { display: none; }
+.complete.in { opacity: 1; transform: none; }
+.complete i { font-style: normal; margin: 0 0.5em; opacity: 0.5; }
+.complete::after {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 1px;
+  margin: 22px auto 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+}
+
+/* closing message: a clear order of importance */
+.closing { padding: 70px 24px 150px; }
+.closing-big { font-weight: 500; font-size: clamp(32px, 7.5vw, 48px); letter-spacing: 0.01em; }
+.closing-soft { margin-top: 34px !important; font: 300 15px/1.5 var(--sans); letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.55); }
+.closing-text { margin-top: 14px !important; font: 300 clamp(15px, 4vw, 17px)/1.85 var(--sans); letter-spacing: 0.04em; color: rgba(255, 255, 255, 0.72); }
+.closing-heart { margin-top: 56px !important; font-size: 22px; text-shadow: 0 0 18px rgba(240, 138, 155, 0.7); }
+.closing-wish {
+  margin-top: 22px !important;
+  font-weight: 600;
+  font-size: clamp(28px, 6.6vw, 40px);
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 24px rgba(255, 255, 255, 0.18);
+}
+.closing-sign { margin-top: 20px !important; font: 500 20px/1.4 var(--serif); letter-spacing: 0.06em; color: rgba(255, 255, 255, 0.7); }
+
+@media (max-width: 380px) { .closing { padding: 56px 20px 120px; } .complete { margin-top: 44px; } }
+@media (max-height: 500px) and (orientation: landscape) { .closing { padding: 50px 24px 80px; } }
