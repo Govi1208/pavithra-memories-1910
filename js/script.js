@@ -36,7 +36,7 @@ var RATIOS = [
 
 // Order, ratio and image of every photo live in config/images.json
 // bump this whenever config or images change, so phones don't keep an old cached copy
-var VERSION = '20261007a';
+var VERSION = '20261007b';
 var CONFIG_URL = 'config/images.json?v=' + VERSION;
 // Optional captions live in config/captions.json as { "image012.jpg": "text" }
 var CAPTIONS_URL = 'config/captions.json?v=' + VERSION;
@@ -230,6 +230,7 @@ function toggleFavorite(item) {
   updateHeart(item);
   popHeart(item.favButton);
   document.getElementById('fav-count').textContent = favoriteCount();
+  saveLocal(); // edit mode only: remembers the change and writes it to images.json if serve.js is running
   if (!lightbox.hidden && currentItem() === item) {
     syncViewerHeart();
     popHeart(lbFav);
@@ -297,6 +298,29 @@ function currentData() {
 function saveLocal() {
   if (!EDIT) return; // visitors never store (or inherit) an arrangement
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData())); } catch (e) { /* storage blocked */ }
+  scheduleFileSave();
+}
+
+// With `node serve.js` running, edit mode also writes config/images.json itself, a moment after
+// each change. On any other host (GitHub Pages, Live Server...) that endpoint does not exist, so
+// the Copy / Download buttons are the way to save.
+var fileSaveTimer, editStatus = null;
+
+function setEditStatus(text) { if (editStatus) editStatus.textContent = text; }
+
+function scheduleFileSave() {
+  clearTimeout(fileSaveTimer);
+  fileSaveTimer = setTimeout(function () {
+    fetch('__save-config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(currentData())
+    }).then(function (res) {
+      setEditStatus(res.ok ? 'Saved to images.json ✓' : 'Auto-save off: use Copy or Download');
+    }, function () {
+      setEditStatus('Auto-save off: use Copy or Download');
+    });
+  }, 400);
 }
 
 function loadLocal() {
@@ -643,10 +667,11 @@ buildRatioButtons();
 if (EDIT) {
   var editBar = document.createElement('div');
   editBar.className = 'edit-bar';
-  editBar.innerHTML = '<span>Edit mode</span>' +
+  editBar.innerHTML = '<span id="edit-status">Edit mode</span>' +
     '<button type="button" data-act="copy">Copy images.json</button>' +
     '<button type="button" data-act="download">Download</button>';
   document.body.appendChild(editBar);
+  editStatus = document.getElementById('edit-status');
 
   function configText() { return JSON.stringify(currentData(), null, 4) + '\n'; }
 
