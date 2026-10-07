@@ -36,7 +36,7 @@ var RATIOS = [
 
 // Order, ratio and image of every photo live in config/images.json
 // bump this whenever config or images change, so phones don't keep an old cached copy
-var VERSION = '20261004d';
+var VERSION = '20261007a';
 var CONFIG_URL = 'config/images.json?v=' + VERSION;
 // Optional captions live in config/captions.json as { "image012.jpg": "text" }
 var CAPTIONS_URL = 'config/captions.json?v=' + VERSION;
@@ -274,11 +274,15 @@ function showMessage(text) {
   msg.hidden = false;
 }
 
-// ---- remember the arrangement in this browser ------------------------------
-// config/images.json is the starting point; changes made while browsing are kept
-// in localStorage so a refresh keeps them. Add ?edit to the address to get a
-// "Copy config" button in the viewer that exports them back into images.json.
+// ---- the arrangement: config/images.json is the truth ------------------------
+// Everyone sees the order and ratios from config/images.json, so every device looks the same.
+// A static page cannot write that file, so to change it open the site with ?edit on the address:
+// order / ratio / favorite changes are then kept in this browser while you work, and an
+// "Edit mode" bar (bottom-left) copies or downloads the new images.json to replace the old one.
+// Without ?edit nothing about the arrangement is stored; a visitor's own favorites are the
+// only thing kept in their browser (see FAVORITES_KEY).
 
+var EDIT = /[?&]edit\b/.test(location.search);
 var STORAGE_KEY = 'photo-grid-v2';
 
 function currentData() {
@@ -291,10 +295,12 @@ function currentData() {
 }
 
 function saveLocal() {
+  if (!EDIT) return; // visitors never store (or inherit) an arrangement
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData())); } catch (e) { /* storage blocked */ }
 }
 
 function loadLocal() {
+  if (!EDIT) return null;
   try {
     var saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     return Array.isArray(saved) ? saved.filter(function (s) { return s && typeof s === 'object' && 'id' in s; }) : null;
@@ -338,6 +344,13 @@ fetch(CONFIG_URL)
         favorite: userFavorites.hasOwnProperty(e.id) ? userFavorites[e.id] : fromFile
       });
     });
+    // drop saved choices that now just repeat the file (e.g. after a new images.json was pasted in)
+    var pruned = false;
+    Object.keys(userFavorites).forEach(function (id) {
+      var entry = entries.find(function (x) { return String(x.id) === id; });
+      if (!entry || userFavorites[id] === entry.defaultFavorite) { delete userFavorites[id]; pruned = true; }
+    });
+    if (pruned) saveFavorites();
     entries.sort(function (a, b) { return a.order - b.order; });
     entries.forEach(function (entry) { photos.appendChild(buildItem(entry)); });
     applyFilter(); // lays out, and respects a filter picked while the photos were still loading
@@ -626,18 +639,42 @@ lightbox.addEventListener('touchend', function (e) {
 
 buildRatioButtons();
 
-// ?edit: a button that copies the current arrangement, ready to paste into config/images.json
-if (/[?&]edit\b/.test(location.search)) {
-  var copyBtn = document.createElement('button');
-  copyBtn.type = 'button';
-  copyBtn.textContent = 'Copy config';
-  copyBtn.addEventListener('click', function () {
-    navigator.clipboard.writeText(JSON.stringify(currentData(), null, 4)).then(function () {
-      copyBtn.textContent = 'Copied!';
-      setTimeout(function () { copyBtn.textContent = 'Copy config'; }, 1500);
-    });
+// ?edit: a small bar to get the current order / ratios / favorites out as a new config/images.json
+if (EDIT) {
+  var editBar = document.createElement('div');
+  editBar.className = 'edit-bar';
+  editBar.innerHTML = '<span>Edit mode</span>' +
+    '<button type="button" data-act="copy">Copy images.json</button>' +
+    '<button type="button" data-act="download">Download</button>';
+  document.body.appendChild(editBar);
+
+  function configText() { return JSON.stringify(currentData(), null, 4) + '\n'; }
+
+  function download() {
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(new Blob([configText()], { type: 'application/json' }));
+    link.download = 'images.json';
+    link.click();
+    setTimeout(function () { URL.revokeObjectURL(link.href); }, 1000);
+  }
+
+  function flash(button, text) {
+    var old = button.dataset.label || (button.dataset.label = button.textContent);
+    button.textContent = text;
+    setTimeout(function () { button.textContent = old; }, 1600);
+  }
+
+  editBar.addEventListener('click', function (e) {
+    var button = e.target.closest('button');
+    if (!button) return;
+    if (button.dataset.act === 'download') { download(); flash(button, 'Saved!'); return; }
+    // copying needs https or localhost; anywhere else fall back to a download
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(configText()).then(
+        function () { flash(button, 'Copied!'); },
+        function () { download(); flash(button, 'Downloaded'); });
+    } else { download(); flash(button, 'Downloaded'); }
   });
-  lbRatios.appendChild(copyBtn);
 }
 
 photos.addEventListener('click', function (e) {
