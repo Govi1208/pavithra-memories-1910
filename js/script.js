@@ -36,7 +36,7 @@ var RATIOS = [
 
 // Order, ratio and image of every photo live in config/images.json
 // bump this whenever config or images change, so phones don't keep an old cached copy
-var VERSION = '20261007g';
+var VERSION = '20261008a';
 var CONFIG_URL = 'config/images.json?v=' + VERSION;
 // Optional captions live in config/captions.json as { "image012.jpg": "text" }
 var CAPTIONS_URL = 'config/captions.json?v=' + VERSION;
