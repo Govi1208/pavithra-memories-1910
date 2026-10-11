@@ -71,7 +71,6 @@
         if (ge && /^Please rate this gift from/.test(ge.textContent)) ge.textContent = '';
         else if (ge && /^Please rate this gift and/.test(ge.textContent)) ge.textContent = 'Please add a comment for this gift.';
       }
-      saveDraft();
     }
     setters[key] = set;
     row.addEventListener('click', function (e) {
@@ -326,44 +325,23 @@
       return;
     }
 
-    saveDraft();
     var w = window.open(url, '_blank');
-    if (w) { try { w.opener = null; } catch (err) { /* cross-origin: fine */ } }
-    else window.location.href = url; // pop-up blocked: go there in this tab; the draft is saved
-    showNote('Your review is ready in WhatsApp. Please tap Send to share it with Govind.', url);
+    if (w) {
+      try { w.opener = null; } catch (err) { /* cross-origin: fine */ }
+      showNote('Your review is ready in WhatsApp. Please tap Send to share it with Govind.', url);
+    } else { // pop-up blocked: stay here (nothing is lost) and let her open it with a tap
+      showNote('WhatsApp did not open by itself. Tap "Open WhatsApp again", then tap Send to share your review with Govind.', url);
+    }
   }
 
-  // ---- keep the draft, so nothing is lost if WhatsApp does not open or she comes back ----------
-  var DRAFT_KEY = 'giftReviewDraft';
-  var saveTimer = 0;
-  function saveDraft() {
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(function () {
-      var d = { message: msgEl.value, ratings: values, comments: {} };
-      GIFTS.forEach(function (g, i) { d.comments[i] = document.getElementById('comment-' + (i + 1)).value; });
-      try { localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); } catch (err) { /* storage blocked: no draft */ }
-    }, 300);
-  }
-  function restoreDraft() {
-    var d;
-    try { d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch (err) { d = null; }
-    if (!d) return;
-    msgEl.value = d.message || '';
-    Object.keys(d.ratings || {}).forEach(function (k) {
-      var v = Number(d.ratings[k]);
-      if (setters[k] && v >= 1 && v <= 10) setters[k](v);
-    });
-    GIFTS.forEach(function (g, i) {
-      var ta = document.getElementById('comment-' + (i + 1));
-      if (d.comments && d.comments[i]) ta.value = String(d.comments[i]).slice(0, 500);
-    });
-  }
+  // A refresh starts the review from scratch: nothing is stored. (Also removes the draft that
+  // an earlier version of this page saved in the browser.)
+  try { localStorage.removeItem('giftReviewDraft'); } catch (err) { /* storage blocked: nothing to remove */ }
 
   msgEl.maxLength = MAX; // the browser stops typing and pasting at the limit
+  msgEl.value = '';      // some browsers refill a textarea after a refresh
   buildGifts();
   buildStars(document.getElementById('overall-stars'), 'overall', null);
-  restoreDraft();
-  form.addEventListener('input', saveDraft);
   msgEl.addEventListener('input', updateCount);
   document.getElementById('gift-grid').addEventListener('input', function (e) { // clear a gift's message once she types
     var m = /^comment-(\d+)$/.exec(e.target.id);

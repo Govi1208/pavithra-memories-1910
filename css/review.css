@@ -37,8 +37,7 @@
 .rv-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.5); }
 .rv-btn:disabled { opacity: 0.6; cursor: default; }
 .rv-btn:focus-visible,
-.star:focus-visible,
-.review-back:focus-visible { outline: 2px solid #e6b1b6; outline-offset: 3px; }
+.star:focus-visible { outline: 2px solid #e6b1b6; outline-offset: 3px; }
 .rv-btn-quiet { background: transparent; box-shadow: none; border-color: rgba(255, 255, 255, 0.16); color: rgba(255, 255, 255, 0.78); }
 
 /* ---- page ---- */
@@ -50,17 +49,8 @@
 }
 
 .review-head { text-align: center; padding: 8px 0 34px; }
-.review-back {
-  display: inline-block;
-  margin-bottom: 34px;
-  padding: 10px 4px;
-  color: rgba(255, 255, 255, 0.62);
-  font: 400 12px/1 var(--sans);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  text-decoration: none;
-}
-.review-back:hover { color: #fff; }
+.review-back { display: inline-block; margin: 0 0 34px; }
+.closing-btn { display: inline-block; margin-top: 44px; }
 .review-head h1,
 .heart-section h2 {
   margin: 18px 0 0;

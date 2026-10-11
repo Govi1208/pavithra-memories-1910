@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-scroll">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -11,11 +11,13 @@
   </script>
   <title>Your Review, Pavithra</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext x='16' y='25' font-size='24' text-anchor='middle' fill='%23b5656b'%3E%E2%99%A5%3C/text%3E%3C/svg%3E">
+  <link rel="preload" as="image" href="images/thumbs/Loader.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap">
   <link rel="stylesheet" href="css/style.css?v=20261009b">
-  <link rel="stylesheet" href="css/review.css?v=20261011f">
+  <link rel="stylesheet" href="css/review.css?v=20261011i">
+  <noscript><style>.birthday-loader { display: none; } html.no-scroll { overflow: auto; }</style></noscript>
 </head>
 <body class="review-page">
 
@@ -30,15 +32,29 @@
   <span class="sky-cluster" style="left:44%;top:96%;animation-delay:-7s"><i style="left:0px;top:2px;width:8px;height:8px;animation-delay:-7s"></i><i style="left:12px;top:6px;width:11px;height:11px;animation-delay:-10s"></i><i style="left:24px;top:0px;width:6px;height:6px;animation-delay:-13s"></i></span>
 </div>
 
+<div class="birthday-loader" aria-hidden="true">
+  <div class="birthday-loader-stage">
+    <img class="birthday-loader-image" src="images/thumbs/Loader.jpg" alt="" width="700" height="700" draggable="false">
+    <svg class="birthday-loader-ring" viewBox="0 0 400 400" focusable="false">
+      <defs>
+        <path id="birthday-loader-circle" d="M 50,200 a 150,150 0 1,1 300,0 a 150,150 0 1,1 -300,0"/>
+      </defs>
+      <text class="birthday-loader-text">
+        <textPath href="#birthday-loader-circle" textLength="934" lengthAdjust="spacing">GovindaRajan <tspan>&#9829;</tspan> Pavithra <tspan>&#9829;</tspan> GovindaRajan <tspan>&#9829;</tspan> Pavithra <tspan>&#9829;</tspan> </textPath>
+      </text>
+    </svg>
+  </div>
+</div>
+
 <main class="review" id="review">
   <header class="review-head">
-    <a class="review-back" href="index.html">&larr; Back to memories</a>
+    <a class="hero-btn review-back" href="index.html">Back to Memories</a>
     <svg class="rv-heart" viewBox="0 0 24 22" aria-hidden="true" focusable="false"><path d="M12 21C5 15.5 1 12 1 7.2 1 3.9 3.5 1.5 6.6 1.5c2.2 0 4.2 1.2 5.4 3.1 1.2-1.9 3.2-3.1 5.4-3.1C20.5 1.5 23 3.9 23 7.2 23 12 19 15.5 12 21z"/></svg>
     <h1>The Little Gifts</h1>
     <p>Rate each one from 1 to 10 and add a few words. Every gift needs both.</p>
   </header>
 
-  <form id="review-form" novalidate>
+  <form id="review-form" novalidate autocomplete="off">
     <ol class="gift-grid" id="gift-grid"></ol>
 
     <section class="heart-section" aria-labelledby="heart-title">
@@ -65,8 +81,9 @@
 </main>
 
 <script src="js/sky.js?v=20261008a"></script>
+<script src="js/review-loader.js?v=20261011i"></script>
 <script src="js/review-config.js?v=20261011g"></script>
-<script src="js/review.js?v=20261011f"></script>
+<script src="js/review.js?v=20261011h"></script>
 <script src="js/ripple.js?v=20261009b"></script>
 </body>
 </html>
