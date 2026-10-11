@@ -7,6 +7,7 @@
   var CFG = window.REVIEW_CONFIG || {};
   var GIFTS = CFG.gifts || [];
   var MIN = CFG.minMessageLength || 300;
+  var MAX = CFG.maxMessageLength || 2000;
   var STAR = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.4l2.9 6.2 6.8.8-5 4.6 1.4 6.7L12 17.3 5.9 20.7l1.4-6.7-5-4.6 6.8-.8z"/></svg>';
   var GIFT_ICON = '<svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="8" y="20" width="32" height="20" rx="2"/><rect x="6" y="14" width="36" height="7" rx="2"/><path d="M24 14v26M24 14c-3-7-12-7-12-2.5S20 14 24 14zm0 0c3-7 12-7 12-2.5S28 14 24 14z"/></svg>';
 
@@ -157,7 +158,7 @@
   function updateCount() {
     var len = msgLen();
     var ok = len >= MIN;
-    countEl.textContent = ok ? len + ' characters' : len + ' / ' + MIN + ' characters minimum';
+    countEl.textContent = ok ? len + ' / ' + MAX + ' characters' : len + ' / ' + MIN + ' characters minimum (' + MAX + ' maximum)';
     countEl.classList.toggle('ok', ok);
     if (ok) document.getElementById('err-message').textContent = '';
   }
@@ -301,6 +302,7 @@
     });
   }
 
+  msgEl.maxLength = MAX; // the browser stops typing and pasting at the limit
   buildGifts();
   buildStars(document.getElementById('overall-stars'), 'overall', null);
   restoreDraft();
