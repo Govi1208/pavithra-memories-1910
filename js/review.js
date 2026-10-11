@@ -98,15 +98,71 @@
     paint(0, false);
   }
 
+  // ---- photo carousel: swipe sideways one photo after another (scroll-snap), dots + arrows ---------
+  function buildCarousel(host, track, name, count) {
+    host.classList.add('carousel');
+    track.tabIndex = 0;
+    track.setAttribute('role', 'group');
+    track.setAttribute('aria-roledescription', 'carousel');
+    track.setAttribute('aria-label', 'Photos of ' + name + '. Swipe sideways to see the next one.');
+    host.appendChild(track);
+
+    var badge = el('span', 'gift-badge', '1/' + count);
+    badge.setAttribute('aria-hidden', 'true');
+    host.appendChild(badge);
+
+    var dots = el('div', 'gift-dots');
+    var dotBtns = [];
+    function go(i) {
+      i = Math.max(0, Math.min(count - 1, i));
+      track.scrollTo({ left: i * track.clientWidth, behavior: 'smooth' });
+    }
+    for (var k = 0; k < count; k++) {
+      var d = el('button', 'gift-dot');
+      d.type = 'button';
+      d.setAttribute('aria-label', 'Photo ' + (k + 1) + ' of ' + count);
+      d.addEventListener('click', go.bind(null, k));
+      dots.appendChild(d);
+      dotBtns.push(d);
+    }
+    host.appendChild(dots);
+
+    var prev = el('button', 'gift-arrow prev', '&#8249;');
+    var next = el('button', 'gift-arrow next', '&#8250;');
+    prev.type = next.type = 'button';
+    prev.setAttribute('aria-label', 'Previous photo');
+    next.setAttribute('aria-label', 'Next photo');
+    prev.addEventListener('click', function () { go(current() - 1); });
+    next.addEventListener('click', function () { go(current() + 1); });
+    host.appendChild(prev);
+    host.appendChild(next);
+
+    function current() { return Math.round(track.scrollLeft / (track.clientWidth || 1)); }
+    var raf = 0;
+    function update() {
+      raf = 0;
+      var c = current();
+      dotBtns.forEach(function (b, idx) { b.classList.toggle('on', idx === c); b.setAttribute('aria-current', idx === c ? 'true' : 'false'); });
+      badge.textContent = (c + 1) + '/' + count;
+      prev.hidden = c <= 0;
+      next.hidden = c >= count - 1;
+    }
+    track.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+    window.addEventListener('resize', function () { track.scrollLeft = current() * track.clientWidth; update(); });
+    update();
+  }
+
   // ---- gift cards ----------------------------------------------------------------------------
   function buildGifts() {
     var grid = document.getElementById('gift-grid');
     GIFTS.forEach(function (g, i) {
       var n = i + 1;
       var li = el('li', 'gift');
-      var photos = el('div', 'gift-photos' + (g.photos && g.photos.length > 1 ? ' two' : ''));
-      var shown = (g.photos || []).slice(0, 2);
+      var photos = el('div', 'gift-photos');
+      var shown = (g.photos || []).slice(0, 6);
       if (!shown.length) shown = [null];
+      var multi = shown.length > 1;
+      var track = multi ? el('div', 'gift-track') : photos; // several photos: a swipeable row
       shown.forEach(function (src) {
         var frame = el('div', 'gift-photo');
         var ph = el('div', 'gift-ph', GIFT_ICON);
@@ -120,8 +176,9 @@
           img.src = src;
           frame.appendChild(img);
         }
-        photos.appendChild(frame);
+        track.appendChild(frame);
       });
+      if (multi) buildCarousel(photos, track, g.name, shown.length);
       li.appendChild(photos);
 
       var head = el('div', 'gift-head', '<span class="gift-no">' + pad(n) + '</span><h3>' + escapeHtml(g.name) + '</h3>');

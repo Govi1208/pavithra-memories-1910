@@ -92,11 +92,60 @@
 }
 
 .gift-photos { display: grid; gap: 8px; grid-template-columns: 1fr; }
-.gift-photos.two { grid-template-columns: 1fr 1fr; }
-.gift-photos.two .gift-photo { aspect-ratio: 1 / 1; } /* two side by side: squares show each photo properly */
+
+/* several photos: one square slide at a time, swipe sideways like an Instagram post */
+.gift-photos.carousel { position: relative; display: block; }
+.gift-track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 12px;
+  box-shadow: 0 6px 22px rgba(8, 8, 30, 0.28);
+}
+.gift-track::-webkit-scrollbar { display: none; }
+.gift-track:focus-visible { outline: 2px solid #e6b1b6; outline-offset: 3px; }
+.gift-track .gift-photo { flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; border-radius: 0; box-shadow: none; }
+
+.gift-badge {
+  position: absolute; top: 10px; right: 10px;
+  padding: 4px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(10, 14, 40, 0.5);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  font: 500 11px/1.2 var(--sans); letter-spacing: 0.08em; color: #fff;
+  pointer-events: none;
+}
+.gift-dots { position: absolute; left: 0; right: 0; bottom: 6px; display: flex; justify-content: center; }
+.gift-dot { width: 22px; height: 22px; padding: 0; border: 0; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.gift-dot::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: rgba(255, 255, 255, 0.45); box-shadow: 0 0 4px rgba(0, 0, 0, 0.4); transition: background 0.2s, transform 0.2s; }
+.gift-dot.on::before { background: #fff; transform: scale(1.2); }
+.gift-dot:focus-visible { outline: 2px solid #e6b1b6; border-radius: 50%; }
+
+/* arrows for mouse users only; touch screens just swipe */
+.gift-arrow { display: none; }
+@media (hover: hover) {
+  .gift-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    display: flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; padding: 0 0 3px;
+    border: 1px solid rgba(255, 255, 255, 0.28); border-radius: 50%;
+    background: rgba(10, 14, 40, 0.45);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    color: #fff; font: 400 22px/1 var(--sans); cursor: pointer;
+  }
+  .gift-arrow[hidden] { display: none; }
+  .gift-arrow.prev { left: 8px; }
+  .gift-arrow.next { right: 8px; }
+  .gift-arrow:hover { background: rgba(255, 255, 255, 0.2); }
+  .gift-arrow:focus-visible { outline: 2px solid #e6b1b6; outline-offset: 2px; }
+}
 .gift-photo {
   position: relative;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.05);
