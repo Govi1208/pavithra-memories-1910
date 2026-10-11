@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#101733">
+  <script>
+    // Same password protection as the gallery: not unlocked in this browser session, go back to the gate.
+    try { if (sessionStorage.getItem('birthdayUnlocked') !== 'true') location.replace('index.html'); }
+    catch (e) { location.replace('index.html'); }
+  </script>
+  <title>Your Review, Pavithra</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext x='16' y='25' font-size='24' text-anchor='middle' fill='%23b5656b'%3E%E2%99%A5%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="css/style.css?v=20261009b">
+  <link rel="stylesheet" href="css/review.css?v=20261011c">
+</head>
+<body class="review-page">
+
+<div class="sky" aria-hidden="true"><canvas></canvas>
+  <span class="sky-cluster" style="left:8%;top:9%;animation-delay:-0s"><i style="left:0px;top:6px;width:12px;height:12px;animation-delay:-0s"></i><i style="left:15px;top:0px;width:8px;height:8px;animation-delay:-3s"></i><i style="left:24px;top:14px;width:6px;height:6px;animation-delay:-6s"></i></span>
+  <span class="sky-cluster" style="left:87%;top:6%;animation-delay:-3s"><i style="left:2px;top:0px;width:9px;height:9px;animation-delay:-3s"></i><i style="left:14px;top:10px;width:13px;height:13px;animation-delay:-6s"></i><i style="left:4px;top:22px;width:6px;height:6px;animation-delay:-9s"></i></span>
+  <span class="sky-cluster" style="left:93%;top:26%;animation-delay:-5s"><i style="left:0px;top:10px;width:7px;height:7px;animation-delay:-5s"></i><i style="left:11px;top:0px;width:11px;height:11px;animation-delay:-8s"></i><i style="left:20px;top:16px;width:6px;height:6px;animation-delay:-11s"></i></span>
+  <span class="sky-cluster" style="left:3%;top:43%;animation-delay:-2s"><i style="left:8px;top:0px;width:10px;height:10px;animation-delay:-2s"></i><i style="left:0px;top:14px;width:6px;height:6px;animation-delay:-5s"></i><i style="left:17px;top:17px;width:8px;height:8px;animation-delay:-8s"></i></span>
+  <span class="sky-cluster" style="left:82%;top:61%;animation-delay:-6s"><i style="left:0px;top:4px;width:8px;height:8px;animation-delay:-6s"></i><i style="left:10px;top:12px;width:12px;height:12px;animation-delay:-9s"></i><i style="left:22px;top:2px;width:6px;height:6px;animation-delay:-12s"></i></span>
+  <span class="sky-cluster" style="left:5%;top:74%;animation-delay:-4s"><i style="left:10px;top:6px;width:13px;height:13px;animation-delay:-4s"></i><i style="left:0px;top:0px;width:7px;height:7px;animation-delay:-7s"></i><i style="left:20px;top:20px;width:6px;height:6px;animation-delay:-10s"></i></span>
+  <span class="sky-cluster" style="left:91%;top:85%;animation-delay:-1s"><i style="left:6px;top:10px;width:9px;height:9px;animation-delay:-1s"></i><i style="left:18px;top:0px;width:6px;height:6px;animation-delay:-4s"></i><i style="left:14px;top:18px;width:11px;height:11px;animation-delay:-7s"></i></span>
+  <span class="sky-cluster" style="left:44%;top:96%;animation-delay:-7s"><i style="left:0px;top:2px;width:8px;height:8px;animation-delay:-7s"></i><i style="left:12px;top:6px;width:11px;height:11px;animation-delay:-10s"></i><i style="left:24px;top:0px;width:6px;height:6px;animation-delay:-13s"></i></span>
+</div>
+
+<main class="review" id="review">
+  <header class="review-head">
+    <a class="review-back" href="index.html">&larr; Back to memories</a>
+    <svg class="rv-heart" viewBox="0 0 24 22" aria-hidden="true" focusable="false"><path d="M12 21C5 15.5 1 12 1 7.2 1 3.9 3.5 1.5 6.6 1.5c2.2 0 4.2 1.2 5.4 3.1 1.2-1.9 3.2-3.1 5.4-3.1C20.5 1.5 23 3.9 23 7.2 23 12 19 15.5 12 21z"/></svg>
+    <h1>The Little Gifts</h1>
+    <p>Rate each one from 1 to 10 and add a few words. Every gift needs both.</p>
+  </header>
+
+  <form id="review-form" novalidate>
+    <ol class="gift-grid" id="gift-grid"></ol>
+
+    <section class="heart-section" aria-labelledby="heart-title">
+      <h2 id="heart-title">Tell Me What&rsquo;s in Your Heart</h2>
+
+      <div class="rv-field">
+        <span class="rv-label" id="overall-label">Overall Rating</span>
+        <div class="stars" id="overall-stars" data-labelledby="overall-label"></div>
+        <p class="rv-error" id="err-overall" role="alert"></p>
+      </div>
+
+      <div class="rv-field">
+        <label for="personal-message">Personal Message</label>
+        <textarea id="personal-message" name="message" rows="9" required placeholder="Tell me which gift made you happiest, which one surprised you the most, what you felt when you opened them, and anything else you want me to know..."></textarea>
+        <p class="rv-count" id="msg-count" aria-live="polite"></p>
+        <p class="rv-error" id="err-message" role="alert"></p>
+      </div>
+
+      <p class="rv-error rv-error-form" id="err-form" role="alert"></p>
+      <button type="submit" class="rv-btn" id="send-btn">Send My Review</button>
+      <div class="rv-note" id="wa-note" role="status" hidden></div>
+    </section>
+  </form>
+</main>
+
+<script src="js/sky.js?v=20261008a"></script>
+<script src="js/review-config.js?v=20261011c"></script>
+<script src="js/review.js?v=20261011c"></script>
+<script src="js/ripple.js?v=20261009b"></script>
+</body>
+</html>
+
+
