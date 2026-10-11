@@ -13,12 +13,12 @@ window.REVIEW_CONFIG = {
   // A gift with no photos (or a photo that fails to load) shows a placeholder.
   gifts: [
     { name: 'Handwritten Love Letter', photos: [] },
-    { name: 'Stencils + Mehendi', photos: [] },
+    { name: 'Stencils + Mehendi', photos: ['images/gifts/02-stencils-mehendi.jpg'] },
     { name: 'Personal Photo Website', photos: [] },
     { name: 'Two Photo Frames (QR code on one)', photos: [] },
     { name: 'Husky Soft Toy', photos: ['images/gifts/05-husky-soft-toy.jpg'] },
     { name: 'Maroon Maxi Dress', photos: [] },
-    { name: 'Two Pairs of Jhumkas', photos: [] },
+    { name: 'Two Pairs of Jhumkas', photos: ['images/gifts/07-jhumkas-1.jpg', 'images/gifts/07-jhumkas-2.jpg'] },
     { name: 'Bracelet', photos: [] },
     { name: 'Milton 1L Water Bottle', photos: [] },
     { name: 'Stationery Items', photos: [] },
@@ -26,10 +26,10 @@ window.REVIEW_CONFIG = {
     { name: 'Formal Belt', photos: ['images/gifts/12-formal-belt.jpg'] },
     { name: 'Pearl Floral Tiara / Hair Clip', photos: [] },
     { name: 'Dried Rose Flower', photos: [] },
-    { name: 'Evil Eye Keychain', photos: [] },
+    { name: 'Evil Eye Keychain', photos: ['images/gifts/15-evil-eye-keychain.jpg'] },
     { name: 'MCaffeine Body Wash', photos: [] },
-    { name: 'Ferrero Rocher', photos: [] },
-    { name: 'Candle Sets', photos: [] },
+    { name: 'Ferrero Rocher', photos: ['images/gifts/17-ferrero-rocher.jpg'] },
+    { name: 'Candle Sets', photos: ['images/gifts/18-candle-sets.jpg'] },
     { name: 'Fastrack Black Sling Bag', photos: ['images/gifts/19-fastrack-sling-bag.jpg'] },
     { name: 'Black Platform Sandals', photos: ['images/gifts/20-black-platform-sandals.jpg'] }
   ]
