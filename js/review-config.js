@@ -15,7 +15,7 @@ window.REVIEW_CONFIG = {
     { name: 'Handwritten Love Letter', photos: ['images/gifts/01-love-letter-notebook.jpg'] },
     { name: 'Stencils + Mehendi', photos: ['images/gifts/02-stencils-mehendi.jpg'] },
     { name: 'Personal Photo Website', photos: ['images/gifts/03-photo-website-qr.jpg'] },
-    { name: 'Two Photo Frames (QR code on one)', photos: ['images/gifts/04-photo-frames-1.jpg', 'images/gifts/04-photo-frames-2.jpg'] },
+    { name: 'Two Photo Frames', photos: ['images/gifts/04-photo-frames-1.jpg', 'images/gifts/04-photo-frames-2.jpg'] },
     { name: 'Husky Soft Toy', photos: ['images/gifts/05-husky-soft-toy.jpg'] },
     { name: 'Maroon Maxi Dress', photos: ['images/gifts/06-maroon-dress-1.jpg', 'images/gifts/06-maroon-dress-2.jpg'] },
     { name: 'Two Pairs of Jhumkas', photos: ['images/gifts/07-jhumkas-1.jpg', 'images/gifts/07-jhumkas-2.jpg'] },
