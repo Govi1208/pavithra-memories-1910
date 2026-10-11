@@ -93,6 +93,7 @@
 
 .gift-photos { display: grid; gap: 8px; grid-template-columns: 1fr; }
 .gift-photos.two { grid-template-columns: 1fr 1fr; }
+.gift-photos.two .gift-photo { aspect-ratio: 1 / 1; } /* two side by side: squares show each photo properly */
 .gift-photo {
   position: relative;
   aspect-ratio: 4 / 3;
