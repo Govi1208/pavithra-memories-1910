@@ -14,7 +14,7 @@ window.REVIEW_CONFIG = {
   // them here, e.g.  photos: ['images/gifts/01-body-wash.jpg']  (one or two per gift).
   // A gift with no photos (or a photo that fails to load) shows a placeholder.
   gifts: [
-    { name: 'Haircut', rating: 10, comment: "Entha rating unnoda hair cut ku 😘", photos: ['images/gifts/01-haircut.jpg'] },
+    { name: 'Haircut', rating: 10, comment: "Entha rating unnoda hair cut ku 😘", photos: ['images/gifts/01-hair-cut.jpeg'] },
     { name: 'Stencils + Mehendi', rating: 9, comment: "Super ah eruku thangoooo ✨ thankyou da 😊", photos: ['images/gifts/02-stencils-mehendi.jpg'] },
     { name: 'Personal Photo Website', rating: 10, comment: "It's my top most fav da 😘 entha website ah create pandrathu Evalo kasta patta nu ennaku nallavey therium 🫶 antha photos Ellam just photos mattum ella ah ,antha oru oru photo kullaium neriya memories eruku athu ellathaium onnum create panni thanthathuku romba thanks da 💙", photos: ['images/gifts/03-photo-website-qr.jpg'] },
     { name: 'Two Photo Frames', rating: 10, comment: "😘😘😘😘😘 unnakey nalla ah therium antha photo ennaku evalo pudikum nu , ennaku romba pudicha photo frame pootu thanthathuku romba thanks da ya nu la theriyala serious antha photo ennaku romba pudikum ennaku pudichi paiyan kuda edutha photo athu romba special thana 🥰🥰🥰", photos: ['images/gifts/04-photo-frames-1.jpg', 'images/gifts/04-photo-frames-2.jpg'] },
