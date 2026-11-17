@@ -1,4 +1,4 @@
-// Gallery page: once the visitor has scrolled ~75% of the page, offer a link to review.html.
+// Gallery page: once the visitor has scrolled ~75% of the page, offer a link to Pavithra's review.
 // Shown at most once per browser session once dismissed; never while the photo viewer is open,
 // during the loader, or while a finger/mouse is pressed (so it cannot interrupt a drag).
 (function () {
@@ -50,9 +50,9 @@
     pop.innerHTML =
       '<svg class="rv-heart" viewBox="0 0 24 22" aria-hidden="true" focusable="false" style="display:block;width:20px;height:18px;margin:0 auto;fill:#e2a3ab"><path d="M12 21C5 15.5 1 12 1 7.2 1 3.9 3.5 1.5 6.6 1.5c2.2 0 4.2 1.2 5.4 3.1 1.2-1.9 3.2-3.1 5.4-3.1C20.5 1.5 23 3.9 23 7.2 23 12 19 15.5 12 21z"/></svg>' +
       '<h2 id="rv-pop-title">One Little Thing Before You Go...</h2>' +
-      '<p>You’ve seen our memories. Now, I’d love to know how you felt about the little gifts I chose for you.</p>' +
+      '<p>You’ve seen our memories. Here’s what Pavithra thought of every little gift.</p>' +
       '<div class="rv-pop-actions">' +
-        '<a class="rv-btn" href="review.html" id="rv-pop-go">Write Your Review</a>' +
+        '<a class="rv-btn" href="review.html" id="rv-pop-go">Read Her Review</a>' +
         '<button type="button" class="rv-btn rv-btn-quiet" id="rv-pop-later">Maybe Later</button>' +
       '</div>';
     document.body.appendChild(pop);

@@ -1,6 +1,4 @@
-// Review page: 20 gift ratings + comments, overall rating, personal message.
-// "Send My Review" builds one WhatsApp message and opens it prefilled (wa.me click-to-chat);
-// the visitor taps Send in WhatsApp herself. Nothing is sent by this page, and there is no backend.
+// Published review page: displays Pavithra's submitted ratings and comments.
 (function () {
   'use strict';
 
@@ -206,6 +204,55 @@
     });
   }
 
+  function buildRatingDisplay(host, rating) {
+    var row = el('div', 'review-rating');
+    row.setAttribute('aria-label', 'Rating: ' + rating + ' out of 10');
+    var stars = el('span', 'review-stars', '★'.repeat(rating) + '☆'.repeat(10 - rating));
+    stars.setAttribute('aria-hidden', 'true');
+    row.appendChild(stars);
+    row.appendChild(el('span', 'review-score', rating + '/10'));
+    host.appendChild(row);
+  }
+
+  function buildPublishedReview() {
+    var grid = document.getElementById('gift-grid');
+    GIFTS.forEach(function (g, i) {
+      var n = i + 1;
+      var li = el('li', 'gift');
+      var photos = el('div', 'gift-photos');
+      var shown = (g.photos || []).slice(0, 6);
+      if (!shown.length) shown = [null];
+      var multi = shown.length > 1;
+      var track = multi ? el('div', 'gift-track') : photos;
+      shown.forEach(function (src) {
+        var frame = el('div', 'gift-photo');
+        frame.appendChild(el('div', 'gift-ph', GIFT_ICON));
+        if (src) {
+          var img = el('img');
+          img.alt = g.name;
+          img.loading = 'lazy';
+          img.decoding = 'async';
+          img.addEventListener('error', function () { img.remove(); });
+          img.src = src;
+          frame.appendChild(img);
+        }
+        track.appendChild(frame);
+      });
+      if (multi) buildCarousel(photos, track, g.name, shown.length);
+      li.appendChild(photos);
+
+      li.appendChild(el('div', 'gift-head', '<span class="gift-no">' + pad(n) + '</span><h3>' + escapeHtml(g.name) + '</h3>'));
+      buildRatingDisplay(li, g.rating);
+      var comment = el('p', 'gift-review-comment');
+      comment.textContent = g.comment;
+      li.appendChild(comment);
+      grid.appendChild(li);
+    });
+
+    buildRatingDisplay(document.getElementById('overall-rating'), CFG.overallRating);
+    document.getElementById('personal-message').textContent = CFG.personalMessage;
+  }
+
   // ---- validation ------------------------------------------------------------------------------
   var msgEl = document.getElementById('personal-message');
   var countEl = document.getElementById('msg-count');
@@ -332,6 +379,11 @@
     } else { // pop-up blocked: stay here (nothing is lost) and let her open it with a tap
       showNote('WhatsApp did not open by itself. Tap "Open WhatsApp again", then tap Send to share your review with Govind.', url);
     }
+  }
+
+  if (!form) {
+    buildPublishedReview();
+    return;
   }
 
   // A refresh starts the review from scratch: nothing is stored. (Also removes the draft that
