@@ -78,7 +78,7 @@ function layout() {
 
   var mobile = window.innerWidth <= MOBILE_MAX;
   var gap = mobile ? 7 : 12;
-  var target = mobile ? 150 : 240;
+  var target = mobile ? 200 : 240;
   var width = photos.clientWidth;
 
   var aspect = items.map(aspectOf);
