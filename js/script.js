@@ -526,12 +526,6 @@ var zoom = { scale: 1, x: 0, y: 0 };
 var pointers = {};
 var pinchStart = null;
 
-for (var watermarkIndex = 0; watermarkIndex < 12; watermarkIndex++) {
-  var watermark = document.createElement('span');
-  watermark.textContent = 'For you, Pavithra';
-  document.getElementById('lb-watermark').appendChild(watermark);
-}
-
 function resetZoom() {
   zoom.scale = 1;
   zoom.x = 0;

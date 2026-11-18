@@ -347,29 +347,6 @@ body {
   will-change: transform;
 }
 
-.lb-watermark {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  display: grid;
-  grid-template: repeat(4, 1fr) / repeat(3, 1fr);
-  align-items: center;
-  justify-items: center;
-  overflow: hidden;
-  pointer-events: none;
-  user-select: none;
-}
-
-.lb-watermark span {
-  color: rgba(255, 255, 255, 0.62);
-  font: 500 11px/1 var(--sans);
-  letter-spacing: 0.08em;
-  text-align: center;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-  white-space: nowrap;
-  transform: rotate(-24deg);
-}
-
 .lb-stage {
   touch-action: none;
 }
