@@ -441,7 +441,6 @@ photos.addEventListener('pointerdown', function (e) {
   };
   item.classList.add('dragging');
   item.setPointerCapture(e.pointerId);
-  e.preventDefault();
   requestAnimationFrame(edgeScroll);
 });
 
