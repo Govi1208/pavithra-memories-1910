@@ -518,9 +518,41 @@ var lbCaption = document.getElementById('lb-caption');
 var lbCount = document.getElementById('lb-count');
 var lbRatios = document.getElementById('lb-ratios');
 var lbFav = document.getElementById('lb-fav');
+var lbZoomLevel = document.getElementById('lb-zoom-level');
 
 var viewer = { items: [], index: 0, token: 0 };
 var fullImages = {}; // file -> Image, only for the current photo and its neighbours
+var zoom = { scale: 1, x: 0, y: 0 };
+var pointers = {};
+var pinchStart = null;
+
+for (var watermarkIndex = 0; watermarkIndex < 12; watermarkIndex++) {
+  var watermark = document.createElement('span');
+  watermark.textContent = 'For you, Pavithra';
+  document.getElementById('lb-watermark').appendChild(watermark);
+}
+
+function resetZoom() {
+  zoom.scale = 1;
+  zoom.x = 0;
+  zoom.y = 0;
+  updateZoom();
+}
+
+function updateZoom() {
+  var maxX = lbFrame.clientWidth * (zoom.scale - 1) / 2;
+  var maxY = lbFrame.clientHeight * (zoom.scale - 1) / 2;
+  zoom.x = Math.max(-maxX, Math.min(maxX, zoom.x));
+  zoom.y = Math.max(-maxY, Math.min(maxY, zoom.y));
+  lbImg.style.transform = 'translate(' + zoom.x + 'px, ' + zoom.y + 'px) scale(' + zoom.scale + ')';
+  lbZoomLevel.textContent = Math.round(zoom.scale * 100) + '%';
+}
+
+function setZoom(scale) {
+  zoom.scale = Math.max(1, Math.min(4, scale));
+  if (zoom.scale === 1) { zoom.x = 0; zoom.y = 0; }
+  updateZoom();
+}
 
 function currentItem() {
   return viewer.items[viewer.index];
@@ -560,6 +592,7 @@ function fitFrame() {
   lbFrame.style.width = w + 'px';
   lbFrame.style.height = (w / a) + 'px';
   lbFrame.style.visibility = 'visible';
+  updateZoom();
 }
 
 function onImgLoad() {
@@ -589,6 +622,7 @@ function show(i) {
   viewer.index = (i + n) % n;
   var item = viewer.items[viewer.index];
   var token = ++viewer.token;
+  resetZoom();
   markRatio();
   syncViewerHeart();
 
@@ -637,6 +671,9 @@ function closeLightbox() {
   var current = viewer.items[viewer.index];
   viewer.token++;
   lightbox.hidden = true;
+  resetZoom();
+  pointers = {};
+  pinchStart = null;
   lbImg.onload = null;
   lbImg.removeAttribute('src');
   fullImages = {};
@@ -654,6 +691,9 @@ function onViewerKey(e) {
   if (e.key === 'Escape') closeLightbox();
   else if (e.key === 'ArrowLeft') show(viewer.index - 1);
   else if (e.key === 'ArrowRight') show(viewer.index + 1);
+  else if (e.key === '+' || e.key === '=') setZoom(zoom.scale + 0.25);
+  else if (e.key === '-') setZoom(zoom.scale - 0.25);
+  else if (e.key === '0') resetZoom();
   else if (e.key === 'Tab') {
     // keep Tab inside the viewer while it is open
     var focusable = lightbox.querySelectorAll('button');
@@ -667,15 +707,71 @@ document.getElementById('lb-close').addEventListener('click', closeLightbox);
 lbFav.addEventListener('click', function () { toggleFavorite(currentItem()); });
 document.getElementById('lb-prev').addEventListener('click', function () { show(viewer.index - 1); });
 document.getElementById('lb-next').addEventListener('click', function () { show(viewer.index + 1); });
+document.getElementById('lb-zoom-in').addEventListener('click', function () { setZoom(zoom.scale + 0.25); });
+document.getElementById('lb-zoom-out').addEventListener('click', function () { setZoom(zoom.scale - 0.25); });
+document.getElementById('lb-zoom-reset').addEventListener('click', resetZoom);
 lightbox.addEventListener('click', function (e) {
   if (e.target === lightbox || e.target === lbStage) closeLightbox();
 });
+
+lbStage.addEventListener('wheel', function (e) {
+  e.preventDefault();
+  setZoom(zoom.scale + (e.deltaY < 0 ? 0.2 : -0.2));
+}, { passive: false });
+
+lbStage.addEventListener('pointerdown', function (e) {
+  if (e.target.closest('button')) return;
+  lbStage.setPointerCapture(e.pointerId);
+  pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
+  if (Object.keys(pointers).length === 2) {
+    var pair = Object.keys(pointers).map(function (id) { return pointers[id]; });
+    var distance = Math.hypot(pair[0].x - pair[1].x, pair[0].y - pair[1].y);
+    pinchStart = distance > 0 ? { distance: distance, scale: zoom.scale } : null;
+  } else if (zoom.scale > 1) {
+    pointers[e.pointerId].panX = zoom.x;
+    pointers[e.pointerId].panY = zoom.y;
+    pointers[e.pointerId].startX = e.clientX;
+    pointers[e.pointerId].startY = e.clientY;
+  }
+});
+
+lbStage.addEventListener('pointermove', function (e) {
+  if (!pointers[e.pointerId]) return;
+  pointers[e.pointerId].x = e.clientX;
+  pointers[e.pointerId].y = e.clientY;
+  var ids = Object.keys(pointers);
+  if (ids.length > 1 && pinchStart) {
+    var pair = ids.slice(0, 2).map(function (id) { return pointers[id]; });
+    var distance = Math.hypot(pair[0].x - pair[1].x, pair[0].y - pair[1].y);
+    setZoom(pinchStart.scale * distance / pinchStart.distance);
+  } else if (zoom.scale > 1 && pointers[e.pointerId].startX !== undefined) {
+    zoom.x = pointers[e.pointerId].panX + e.clientX - pointers[e.pointerId].startX;
+    zoom.y = pointers[e.pointerId].panY + e.clientY - pointers[e.pointerId].startY;
+    updateZoom();
+  }
+});
+
+function endZoomPointer(e) {
+  delete pointers[e.pointerId];
+  if (Object.keys(pointers).length < 2) pinchStart = null;
+  if (Object.keys(pointers).length === 1 && zoom.scale > 1) {
+    var id = Object.keys(pointers)[0];
+    pointers[id].panX = zoom.x;
+    pointers[id].panY = zoom.y;
+    pointers[id].startX = pointers[id].x;
+    pointers[id].startY = pointers[id].y;
+  }
+}
+lbStage.addEventListener('pointerup', endZoomPointer);
+lbStage.addEventListener('pointercancel', endZoomPointer);
+lbImg.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+lbImg.addEventListener('dragstart', function (e) { e.preventDefault(); });
 
 // swipe left/right on touch screens
 var swipe = null;
 lightbox.addEventListener('touchstart', function (e) {
   var t = e.touches[0];
-  swipe = e.touches.length === 1 && !e.target.closest('.lb-ratios') ? { x: t.clientX, y: t.clientY } : null;
+  swipe = e.touches.length === 1 && zoom.scale === 1 && !e.target.closest('.lb-ratios, .lb-zoom') ? { x: t.clientX, y: t.clientY } : null;
 }, { passive: true });
 lightbox.addEventListener('touchend', function (e) {
   if (!swipe) return;

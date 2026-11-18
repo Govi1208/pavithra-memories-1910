@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap">
-  <link rel="stylesheet" href="css/style.css?v=20261009b">
+  <link rel="stylesheet" href="css/style.css?v=20261118a">
   <link rel="stylesheet" href="css/review.css?v=20261011i">
   <noscript><style>.birthday-loader { display: none; } html.no-scroll { overflow: auto; }</style></noscript>
 </head>
@@ -99,10 +99,16 @@
   <button type="button" class="lb-btn lb-fav" id="lb-fav" aria-pressed="false" aria-label="Add to favorites">&#9825;</button>
 
   <div class="lb-stage" id="lb-stage">
-    <div class="lb-frame" id="lb-frame"><img id="lb-img" alt="" draggable="false"></div>
+    <div class="lb-frame" id="lb-frame"><img id="lb-img" alt="" draggable="false"><div class="lb-watermark" id="lb-watermark" aria-hidden="true"></div></div>
   </div>
   <div class="lb-bottom">
     <p class="lb-caption" id="lb-caption" hidden></p>
+    <div class="lb-zoom glass" role="group" aria-label="Image zoom">
+      <button type="button" id="lb-zoom-out" aria-label="Zoom out">&minus;</button>
+      <span id="lb-zoom-level" aria-live="polite">100%</span>
+      <button type="button" id="lb-zoom-in" aria-label="Zoom in">+</button>
+      <button type="button" id="lb-zoom-reset" aria-label="Reset zoom">Reset</button>
+    </div>
     <div class="lb-ratios glass" id="lb-ratios" role="group" aria-label="Crop shape"></div>
     <div class="lb-bar glass">
       <button type="button" class="lb-nav" id="lb-prev" aria-label="Previous photo">&#8249;</button>
@@ -114,7 +120,7 @@
 
 <script src="js/sky.js?v=20261008a"></script>
 <script src="js/gate.js?v=20261008a"></script>
-<script src="js/script.js?v=20261117a"></script>
+<script src="js/script.js?v=20261118a"></script>
 <script src="js/ripple.js?v=20261009b"></script>
 <script src="js/review-popup.js?v=20261117a"></script>
 </body>
